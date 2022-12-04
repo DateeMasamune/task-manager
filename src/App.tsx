@@ -5,11 +5,14 @@ import { theme } from './theme';
 import { JusticeBoardRoutes } from './components/JusticeBoardRoutes';
 
 import './index.css';
+import { JusticeTaskManagerContextProvider } from './components/JusticeTaskManagerContext';
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <JusticeBoardRoutes />
+      <JusticeTaskManagerContextProvider>
+        <JusticeBoardRoutes />
+      </JusticeTaskManagerContextProvider>
     </ThemeProvider>
   );
 }

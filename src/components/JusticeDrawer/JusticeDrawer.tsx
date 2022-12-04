@@ -12,9 +12,13 @@ import ListItemText from '@mui/material/ListItemText';
 import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
-import { FC, ReactNode } from 'react';
+import { FC, ReactNode, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { menuList } from '../../constants';
+import { useModalControll } from '../../hooks/useModalControll';
+import { CreateBoardModal } from '../CreateBoardModal';
+import { CreateColumnModal } from '../CreateColumnModal';
+import { CreateTaskModal } from '../CreateTaskModal';
 
 interface JusticeDrawerProps {
   children: ReactNode
@@ -23,7 +27,11 @@ interface JusticeDrawerProps {
 const drawerWidth = 200;
 
 export const JusticeDrawer: FC<JusticeDrawerProps> = ({ children }) => {
-  const [mobileOpen, setMobileOpen] = React.useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  const { open: openAddBoard, handleOpen: handleOpenAddBoard, handleClose: handleCloseAddBoard } = useModalControll();
+  const { open: openAddColumn, handleOpen: handleOpenAddColumn, handleClose: handleCloseAddColumn } = useModalControll();
+  const { open: openAddTask, handleOpen: handleOpenAddTask, handleClose: handleCloseAddTask } = useModalControll();
 
   const navigation = useNavigate();
 
@@ -33,6 +41,9 @@ export const JusticeDrawer: FC<JusticeDrawerProps> = ({ children }) => {
 
   const handleActionClickButton = (link: string | null, id: number) => {
     if (link) navigation(link);
+    if (id === 2) handleOpenAddBoard();
+    if (id === 3) handleOpenAddColumn();
+    if (id === 4) handleOpenAddTask();
     console.log(id);
   };
 
@@ -113,6 +124,9 @@ export const JusticeDrawer: FC<JusticeDrawerProps> = ({ children }) => {
         sx={{ width: { sm: `calc(100% - ${drawerWidth}px)` }, marginTop: '64px', height: '91vh' }}
       >
         {children}
+        <CreateBoardModal open={openAddBoard} handleClose={handleCloseAddBoard} />
+        <CreateColumnModal open={openAddColumn} handleClose={handleCloseAddColumn} />
+        <CreateTaskModal open={openAddTask} handleClose={handleCloseAddTask} />
       </Box>
     </Box>
   );

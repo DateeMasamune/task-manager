@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
   Box, Card, CardContent, Typography,
 } from '@mui/material';
@@ -6,12 +6,13 @@ import {
 import { useNavigate } from 'react-router-dom';
 import styles from './styles.module.scss';
 import { routes } from '../../constants';
-import { boards } from '../../mock';
+import { JusticeTaskManagerContext } from '../JusticeTaskManagerContext';
 
 const { AllBOARDS } = routes;
 
 export const AllBoards = () => {
   const navigation = useNavigate();
+  const { boards } = useContext(JusticeTaskManagerContext);
 
   return (
     <Box className={styles.wrapperAllBoards}>

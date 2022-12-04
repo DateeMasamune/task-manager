@@ -1,6 +1,6 @@
 import { Board, ColumsFromBackendProps, ItemsFromBackendProps } from './types';
 
-export const boards: Board[] = [
+export const boardsMock: Board[] = [
   {
     id: '1',
     name: 'Название Доски',
@@ -45,7 +45,7 @@ export const boards: Board[] = [
   },
 ];
 
-export const itemsFromBackend: ItemsFromBackendProps[] = [
+export const itemsFromBackendMock: ItemsFromBackendProps[] = [
   {
     id: 1,
     columnId: 7,
@@ -58,7 +58,7 @@ export const itemsFromBackend: ItemsFromBackendProps[] = [
   },
 ];
 
-export const itemsTwoFromBackend: ItemsFromBackendProps[] = [
+export const itemsTwoFromBackendMock: ItemsFromBackendProps[] = [
   {
     id: 3,
     columnId: 7,
@@ -71,7 +71,7 @@ export const itemsTwoFromBackend: ItemsFromBackendProps[] = [
   },
 ];
 
-export const itemsThreeFromBackend: ItemsFromBackendProps[] = [
+export const itemsThreeFromBackendMock: ItemsFromBackendProps[] = [
   {
     id: 5,
     columnId: 7,
@@ -84,23 +84,23 @@ export const itemsThreeFromBackend: ItemsFromBackendProps[] = [
   },
 ];
 
-export const columsFromBackend: ColumsFromBackendProps[] = [
+export const columsFromBackendMock: ColumsFromBackendProps[] = [
   {
     id: 7,
     boardId: 1,
     name: 'Todo',
-    items: itemsFromBackend,
+    items: itemsFromBackendMock,
   },
   {
     id: 8,
     boardId: 1,
     name: 'In progress',
-    items: itemsTwoFromBackend,
+    items: itemsTwoFromBackendMock,
   },
   {
     id: 9,
     name: 'Ready',
     boardId: 1,
-    items: itemsThreeFromBackend,
+    items: itemsThreeFromBackendMock,
   },
 ];

@@ -7,10 +7,10 @@ import { JusticeColumns } from '../JusticeColumn';
 
 import styles from './styles.module.scss';
 import { ColumsFromBackendProps } from '../../types';
-import { columsFromBackend } from '../../mock';
+import { columsFromBackendMock } from '../../mock';
 
 export const JusticeBoard = () => {
-  const [columns, setColumns] = useState<ColumsFromBackendProps[]>(columsFromBackend);
+  const [columns, setColumns] = useState<ColumsFromBackendProps[]>(columsFromBackendMock);
 
   const handlerOnDragEnd = (result: DropResult) => {
     const { source, destination } = result;
