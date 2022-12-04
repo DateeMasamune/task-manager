@@ -21,6 +21,22 @@ export const theme = createTheme({
         root: {
           background: 'black',
           color: 'white',
+          overflow: 'unset',
+        },
+      },
+    },
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          background: 'white',
+          overflow: 'unset',
+        },
+      },
+    },
+    MuiFormControl: {
+      styleOverrides: {
+        root: {
+          width: '100%',
         },
       },
     },

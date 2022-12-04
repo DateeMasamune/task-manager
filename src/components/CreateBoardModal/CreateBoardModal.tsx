@@ -1,36 +1,44 @@
-import { Box, Modal, Typography } from '@mui/material';
-import React, { FC } from 'react';
+import {
+  Autocomplete,
+  Box, Dialog, DialogContent, DialogTitle, Modal, TextField,
+} from '@mui/material';
+import React, { FC, useContext, useState } from 'react';
+import { JusticeTaskManagerContext } from '../JusticeTaskManagerContext';
+
+import styles from './styles.module.scss';
 
 interface CreateBoardModalProps {
   open: boolean
   handleClose: () => void
 }
 
-const style = {
-  position: 'absolute' as 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  boxShadow: 24,
-  p: 4,
-};
+export const CreateBoardModal: FC<CreateBoardModalProps> = ({ open, handleClose }) => {
+  const [newBoard, setNewBoard] = useState({});
+  const { users, addBoards } = useContext(JusticeTaskManagerContext);
 
-export const CreateBoardModal: FC<CreateBoardModalProps> = ({ open, handleClose }) => (
-  <Modal
-    open={open}
-    onClose={handleClose}
-    aria-labelledby="modal-modal-title"
-    aria-describedby="modal-modal-description"
-  >
-    <Box sx={style}>
-      <Typography id="modal-modal-title" variant="h6" component="h2">
-        Text in a modal
-      </Typography>
-      <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-        CreateBoardModal
-      </Typography>
-    </Box>
-  </Modal>
-);
+  const handleAddBoards = (event) => {
+    console.log('event', event);
+  };
+  return (
+    <Dialog
+      variant="light"
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+      maxWidth="sm"
+      fullWidth
+    >
+      <DialogTitle>Добавить новую доску</DialogTitle>
+      <DialogContent>
+        <TextField id="standard-basic" label="Название Доски" variant="standard" name="board-name" onChange={handleAddBoards} />
+        <Autocomplete
+          disablePortal
+          id="combo-box-demo"
+          options={users}
+          renderInput={(params) => <TextField {...params} label="Разрешить доступ к доске" />}
+        />
+      </DialogContent>
+    </Dialog>
+  );
+};

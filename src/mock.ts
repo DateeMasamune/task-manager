@@ -1,4 +1,19 @@
-import { Board, ColumsFromBackendProps, ItemsFromBackendProps } from './types';
+import { Board, ColumsFromBackendProps, ItemsFromBackendProps, Users } from './types';
+
+export const usersMock: Users[] = [
+  {
+    id: 1,
+    label: 'Dima',
+  },
+  {
+    id: 2,
+    label: 'Misha',
+  },
+  {
+    id: 3,
+    label: 'Stas',
+  },
+];
 
 export const boardsMock: Board[] = [
   {

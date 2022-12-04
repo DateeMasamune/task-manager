@@ -5,6 +5,11 @@ export interface Board {
   rootUser: string,
 }
 
+export interface Users {
+  id: number,
+  label: string,
+}
+
 export interface ItemsFromBackendProps {
   id: number
   content: string
