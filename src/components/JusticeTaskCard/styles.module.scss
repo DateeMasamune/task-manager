@@ -1,0 +1,13 @@
+.card {
+  user-select: none;
+  margin: 0 0 8px 0;
+  min-height: 50p;
+  color: white;
+  box-shadow: -15px 20px 11px -3px rgba(34, 60, 80, 0.38);
+  position: relative;
+  overflow: unset;
+
+  .cardContent {
+    padding-bottom: 24px;
+  }
+}

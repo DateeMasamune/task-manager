@@ -1,43 +1,44 @@
+import React, { FC, useState } from 'react';
 import { Card, CardContent, Typography } from '@mui/material';
-import React, { FC } from 'react';
-import { Draggable } from 'react-beautiful-dnd';
-import { ItemsFromBackendProps } from '../JusticeBoard';
+import { DraggableProvided, DraggableStateSnapshot } from 'react-beautiful-dnd';
+import { CloseButton } from '../CloseButton';
+
+import styles from './styles.module.scss';
 
 interface JusticeTaskCardProps {
-  items: ItemsFromBackendProps[]
+  providedItem: DraggableProvided
+  snapshotItem: DraggableStateSnapshot
+  content: string
+  itemId: string
 }
 
-export const JusticeTaskCard: FC<JusticeTaskCardProps> = ({ items }) => (
-  <>
-    {items.map(({ id: itemId, content }, index) => (
-      <Draggable
-        key={itemId}
-        draggableId={itemId}
-        index={index}
-      >
-        {(providedItem, snapshotItem) => (
-          <Card
-            ref={providedItem.innerRef}
-            {...providedItem.draggableProps}
-            {...providedItem.dragHandleProps}
-            sx={{
-              userSelect: 'none',
-              margin: '0 0 8px 0',
-              minHeight: '50px',
-              backgroundColor: snapshotItem.isDragging ? '#444444' : '#000000',
-              color: 'white',
-              ...providedItem.draggableProps.style,
-              boxShadow: '-4px 28px 42px 6px rgba(34, 60, 80, 0.37)',
-            }}
-          >
-            <CardContent>
-              <Typography>
-                {content}
-              </Typography>
-            </CardContent>
-          </Card>
-        )}
-      </Draggable>
-    ))}
-  </>
-);
+export const JusticeTaskCard: FC<JusticeTaskCardProps> = ({
+  providedItem, snapshotItem, content, itemId,
+}) => {
+  const [showCloseButton, setShowCloseButton] = useState(false);
+
+  const showButton = () => setShowCloseButton(true);
+  const hideButton = () => setShowCloseButton(false);
+
+  return (
+    <Card
+      ref={providedItem.innerRef}
+      {...providedItem.draggableProps}
+      {...providedItem.dragHandleProps}
+      className={styles.card}
+      sx={{
+        backgroundColor: snapshotItem.isDragging ? '#444444' : '#000000',
+        ...providedItem.draggableProps.style,
+      }}
+      onMouseEnter={showButton}
+      onMouseLeave={hideButton}
+    >
+      <CardContent className={styles.cardContent}>
+        <Typography>
+          {content}
+        </Typography>
+      </CardContent>
+      {showCloseButton && <CloseButton itemId={itemId} />}
+    </Card>
+  );
+};

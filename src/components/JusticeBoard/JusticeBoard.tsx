@@ -5,6 +5,8 @@ import {
 } from 'react-beautiful-dnd';
 import { JusticeColumns } from '../JusticeColumn';
 
+import styles from './styles.module.scss';
+
 export interface ItemsFromBackendProps {
   id: string
   content: string
@@ -143,9 +145,7 @@ export const JusticeBoard = () => {
       <Droppable droppableId="all-columns" direction="horizontal" type="column">
         {(provided) => (
           <Box
-            sx={{
-              display: 'flex', width: '100%', height: '100%',
-            }}
+            className={styles.wrapperJusticeBoard}
             {...provided.droppableProps}
             ref={provided.innerRef}
           >
