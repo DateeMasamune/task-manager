@@ -10,6 +10,7 @@ interface JusticeTaskManagerContextProps {
   boards: Board[]
   columns: ColumsFromBackendProps[]
   tasks: ItemsFromBackendProps[]
+  users: Users[]
   // eslint-disable-next-line no-unused-vars
   addBoards: (board: Board) => void
   // eslint-disable-next-line no-unused-vars
