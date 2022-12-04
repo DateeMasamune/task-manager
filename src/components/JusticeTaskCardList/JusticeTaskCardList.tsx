@@ -4,18 +4,18 @@ import {
 } from '@mui/material';
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 
-import { ItemsFromBackendProps } from '../JusticeBoard';
 import { JusticeTaskCard } from '../JusticeTaskCard/JusticeTaskCard';
 
 import styles from './styles.module.scss';
+import { ItemsFromBackendProps } from '../../types';
 
 interface JusticeTaskCardListProps {
   items: ItemsFromBackendProps[]
-  id: string
+  id: number
 }
 
 export const JusticeTaskCardList: FC<JusticeTaskCardListProps> = ({ items, id }) => (
-  <Droppable droppableId={id} key={id}>
+  <Droppable droppableId={String(id)} key={id}>
     {(providedTask) => (
       <Box
         ref={providedTask.innerRef}
@@ -26,7 +26,7 @@ export const JusticeTaskCardList: FC<JusticeTaskCardListProps> = ({ items, id })
         {items.map(({ id: itemId, content }, index) => (
           <Draggable
             key={itemId}
-            draggableId={itemId}
+            draggableId={String(itemId)}
             index={index}
           >
             {(providedItem, snapshotItem) => (

@@ -1,18 +1,15 @@
 import React from 'react';
 import { ThemeProvider } from '@mui/material';
 
-import { JusticeBoard } from './components/JusticeBoard';
 import { theme } from './theme';
-import { JusticeDrawer } from './components/JusticeDrawer';
+import { JusticeBoardRoutes } from './components/JusticeBoardRoutes';
 
 import './index.css';
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
-      <JusticeDrawer>
-        <JusticeBoard />
-      </JusticeDrawer>
+      <JusticeBoardRoutes />
     </ThemeProvider>
   );
 }

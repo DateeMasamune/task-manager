@@ -4,11 +4,11 @@ import { Box } from '@mui/material';
 import styles from './styles.module.scss';
 
 interface CloseButtonProps {
-  itemId: string
+  itemId: number
 }
 
 export const CloseButton: FC<CloseButtonProps> = ({ itemId }) => {
-  const handleDeleteTask = (id: string) => {
+  const handleDeleteTask = (id: number) => {
     console.log('delete-id', id);
   };
 

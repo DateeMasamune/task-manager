@@ -1,0 +1,12 @@
+    .wrapperAllBoards {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 50px;
+      padding: 50px;
+      flex-wrap: wrap;
+
+      .card {
+        cursor: pointer;
+      }
+    }

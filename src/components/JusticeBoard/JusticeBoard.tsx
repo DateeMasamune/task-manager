@@ -1,4 +1,4 @@
-import React, { useId, useState } from 'react';
+import React, { useState } from 'react';
 import { Box } from '@mui/material';
 import {
   DragDropContext, Droppable, DropResult,
@@ -6,70 +6,10 @@ import {
 import { JusticeColumns } from '../JusticeColumn';
 
 import styles from './styles.module.scss';
-
-export interface ItemsFromBackendProps {
-  id: string
-  content: string
-}
-
-interface ColumsFromBackendProps {
-  id: string
-  name: string
-  items: ItemsFromBackendProps[]
-}
+import { ColumsFromBackendProps } from '../../types';
+import { columsFromBackend } from '../../mock';
 
 export const JusticeBoard = () => {
-  const itemsFromBackend: ItemsFromBackendProps[] = [
-    {
-      id: useId(),
-      content: 'First task',
-    },
-    {
-      id: useId(),
-      content: 'Second task',
-    },
-  ];
-
-  const itemsTwoFromBackend: ItemsFromBackendProps[] = [
-    {
-      id: useId(),
-      content: 'Three task',
-    },
-    {
-      id: useId(),
-      content: 'Four task',
-    },
-  ];
-
-  const itemsThreeFromBackend: ItemsFromBackendProps[] = [
-    {
-      id: useId(),
-      content: 'Five task',
-    },
-    {
-      id: useId(),
-      content: 'Six task',
-    },
-  ];
-
-  const columsFromBackend: ColumsFromBackendProps[] = [
-    {
-      id: useId(),
-      name: 'Todo',
-      items: itemsFromBackend,
-    },
-    {
-      id: useId(),
-      name: 'In progress',
-      items: itemsTwoFromBackend,
-    },
-    {
-      id: useId(),
-      name: 'Ready',
-      items: itemsThreeFromBackend,
-    },
-  ];
-
   const [columns, setColumns] = useState<ColumsFromBackendProps[]>(columsFromBackend);
 
   const handlerOnDragEnd = (result: DropResult) => {
@@ -77,8 +17,8 @@ export const JusticeBoard = () => {
 
     if (!destination) return;
 
-    const sourceColumn = columns.find(({ id }) => id === source.droppableId);
-    const destColumn = columns.find(({ id }) => id === destination.droppableId);
+    const sourceColumn = columns.find(({ id }) => String(id) === source.droppableId);
+    const destColumn = columns.find(({ id }) => String(id) === destination.droppableId);
 
     const dragColumn = [...columns];
 
@@ -95,8 +35,8 @@ export const JusticeBoard = () => {
         const [removedTaskFromColumn] = swapSourceItems.splice(source.index, 1);
         swapDestinationItems.splice(destination.index, 0, removedTaskFromColumn);
 
-        const columnDestination = columns.find(({ id }) => id === destination.droppableId);
-        const columnSource = columns.find(({ id }) => id === source.droppableId);
+        const columnDestination = columns.find(({ id }) => String(id) === destination.droppableId);
+        const columnSource = columns.find(({ id }) => String(id) === source.droppableId);
 
         if (columnDestination && columnSource) {
           const updateColumns = columns.map((item) => {

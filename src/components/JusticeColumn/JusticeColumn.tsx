@@ -2,15 +2,9 @@ import React, { FC } from 'react';
 import { Box, Typography } from '@mui/material';
 import { Draggable } from 'react-beautiful-dnd';
 import { JusticeTaskCardList } from '../JusticeTaskCardList';
-import { ItemsFromBackendProps } from '../JusticeBoard';
 
 import styles from './styles.module.scss';
-
-interface ColumsFromBackendProps {
-  id: string
-  name: string
-  items: ItemsFromBackendProps[]
-}
+import { ColumsFromBackendProps } from '../../types';
 
 interface JusticeColumnsProps {
   columns: ColumsFromBackendProps[]
@@ -21,7 +15,7 @@ export const JusticeColumns: FC<JusticeColumnsProps> = ({ columns }) => (
     {columns.map(({ id, items, name }, index) => (
       <Draggable
         key={id}
-        draggableId={id}
+        draggableId={String(id)}
         index={index}
       >
         {(providedCol, spanshotCol) => (

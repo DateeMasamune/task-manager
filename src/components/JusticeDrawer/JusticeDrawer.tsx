@@ -13,6 +13,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
 import Typography from '@mui/material/Typography';
 import { FC, ReactNode } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { menuList } from '../../constants';
 
 interface JusticeDrawerProps {
   children: ReactNode
@@ -23,8 +25,15 @@ const drawerWidth = 200;
 export const JusticeDrawer: FC<JusticeDrawerProps> = ({ children }) => {
   const [mobileOpen, setMobileOpen] = React.useState(false);
 
+  const navigation = useNavigate();
+
   const handleDrawerToggle = () => {
     setMobileOpen(!mobileOpen);
+  };
+
+  const handleActionClickButton = (link: string | null, id: number) => {
+    if (link) navigation(link);
+    console.log(id);
   };
 
   const drawer = (
@@ -32,24 +41,15 @@ export const JusticeDrawer: FC<JusticeDrawerProps> = ({ children }) => {
       <Toolbar />
       <Divider />
       <List>
-        {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemText primary={text} />
+        {menuList.map(({ id, description, link }) => (
+          <ListItem key={id} disablePadding>
+            <ListItemButton onClick={() => handleActionClickButton(link, id)}>
+              <ListItemText primary={description} />
             </ListItemButton>
           </ListItem>
         ))}
       </List>
       <Divider />
-      <List>
-        {['All mail', 'Trash', 'Spam'].map((text) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton>
-              <ListItemText primary={text} />
-            </ListItemButton>
-          </ListItem>
-        ))}
-      </List>
     </div>
   );
 
