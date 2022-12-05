@@ -1,7 +1,7 @@
 import React, {
   createContext, FC, ReactNode, useMemo, useState,
 } from 'react';
-import { boardsMock, usersMock } from '../../mock';
+import { boardsMock, columsFromBackendMock, usersMock } from '../../mock';
 import {
   Board, ColumsFromBackendProps, ItemsFromBackendProps, Users,
 } from '../../types';
@@ -29,7 +29,7 @@ export const JusticeTaskManagerContext = createContext<JusticeTaskManagerContext
 
 export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProviderProps> = ({ children }) => {
   const [boards, setBoards] = useState<Board[]>(boardsMock);
-  const [columns, setColumns] = useState<ColumsFromBackendProps[]>([]);
+  const [columns, setColumns] = useState<ColumsFromBackendProps[]>(columsFromBackendMock);
   const [tasks, setTasks] = useState<ItemsFromBackendProps[]>([]);
   const [users, setUsers] = useState<Users[]>(usersMock);
 
@@ -42,6 +42,10 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
   };
 
   const addTasks = (task: ItemsFromBackendProps) => {
+    const updateColumn = columns.find(({ id }) => id === task.columnId);
+    updateColumn?.items.push(task);
+    /// промапить и обновить эту колонку в стейте
+
     setTasks((prevState) => ([...prevState, task]));
   };
 

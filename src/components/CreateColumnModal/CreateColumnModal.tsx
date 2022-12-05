@@ -16,7 +16,7 @@ interface CreateColumnModalProps {
 
 export const CreateColumnModal: FC<CreateColumnModalProps> = ({ open, handleClose }) => {
   const { boards, addColumns } = useContext(JusticeTaskManagerContext);
-  const [newColumn, setNewColumn] = useState({});
+  const [newColumn, setNewColumn] = useState({} as ColumsFromBackendProps);
 
   const handleOnChangeInputAddColumn = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -29,19 +29,26 @@ export const CreateColumnModal: FC<CreateColumnModalProps> = ({ open, handleClos
   };
 
   const handleAutoCompleteAddColumn = (board: Board | null) => {
-    if (!board) return;
+    if (board) {
+      const { id } = board;
 
-    const { id } = board;
+      setNewColumn((prevState) => ({
+        ...prevState,
+        boardId: id,
+        items: [],
+      }));
+    } else {
+      // @ts-ignore
+      setNewColumn((prevState) => {
+        const { boardId, items, ...rest } = prevState;
 
-    setNewColumn((prevState) => ({
-      ...prevState,
-      boardId: id,
-      items: [],
-    }));
+        return rest;
+      });
+    }
   };
 
   const createColumn = () => {
-    addColumns(newColumn as ColumsFromBackendProps);
+    addColumns(newColumn);
     handleClose();
   };
 
@@ -68,7 +75,7 @@ export const CreateColumnModal: FC<CreateColumnModalProps> = ({ open, handleClos
             renderInput={(params) => <TextField {...params} label="Доски" />}
           />
           <ModalFooter
-            disabled={false}
+            disabled={!(newColumn?.name && newColumn?.boardId)}
             handleClose={handleClose}
             handleCreate={createColumn}
           />

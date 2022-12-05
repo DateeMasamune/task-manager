@@ -13,13 +13,13 @@ export interface Users {
 export interface ItemsFromBackendProps {
   id: string
   content: string
-  columnId: number
+  columnId: string
 }
 
 export interface ColumsFromBackendProps {
   id: string
   name: string
-  boardId: number
+  boardId: string
   items: ItemsFromBackendProps[]
 }
 
