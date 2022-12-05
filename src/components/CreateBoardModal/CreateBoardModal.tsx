@@ -1,14 +1,16 @@
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Box, Button, Checkbox, Dialog, DialogContent, DialogTitle, FormControlLabel, FormGroup, TextField, Typography,
-} from '@mui/material';
 import React, {
   ChangeEvent, FC, useContext, useState,
 } from 'react';
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary, Checkbox, Dialog, DialogContent, DialogTitle, FormControlLabel, FormGroup, TextField, Typography,
+} from '@mui/material';
+
 import { Board } from '../../types';
 import { JusticeTaskManagerContext } from '../JusticeTaskManagerContext';
+import { ModalWrapper } from '../ModalWrapper';
+import { ModalFooter } from '../ModalFooter';
 
 import styles from './styles.module.scss';
 
@@ -26,26 +28,30 @@ export const CreateBoardModal: FC<CreateBoardModalProps> = ({ open, handleClose 
     setNewBoard((prevState) => ({
       ...prevState,
       [name]: value,
+      id: String(Date.now()),
+      rootUser: 'I',
     }));
   };
-  console.log('newBoard', newBoard);
 
-  const useUniqValuesCheckbox = (event, state, setState) => {
-    if (!event.target.checked) {
-      const newState = state.filter((element) => element !== event.target.name);
-      setState(newState);
+  const handleAddUsersForBoard = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, checked } = event.target;
+
+    if (checked) {
+      setNewBoard((prevState) => ({
+        ...prevState,
+        users: prevState?.users ? [...prevState.users, name] : [name],
+      }));
     } else {
-      if (!state.includes(event.target.name)) {
-        setState((prevState) => [...prevState, event.target.name]);
-      }
-      setState((prevState) => prevState);
+      setNewBoard((prevState) => ({
+        ...prevState,
+        users: prevState?.users.filter((id) => id !== name),
+      }));
     }
   };
 
-  const handleOnchangeAutoCompleteAddBoards = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = event.target;
-    console.log('name', name);
-    console.log('checked', checked);
+  const handleCreateBoard = () => {
+    addBoards(newBoard);
+    handleClose();
   };
 
   return (
@@ -58,34 +64,38 @@ export const CreateBoardModal: FC<CreateBoardModalProps> = ({ open, handleClose 
       fullWidth
       className={styles.wrapperCreateBoardModal}
     >
+
       <DialogTitle>Добавить новую доску</DialogTitle>
       <DialogContent>
-        <TextField id="standard-basic" label="Название Доски" variant="standard" name="name" onChange={handleOnchangeInputAddBoards} />
-        <Accordion className={styles.accordion}>
-          <AccordionSummary
-            aria-controls="panel1a-content"
-            id="panel1a-header"
-          >
-            <Typography>Разрешите доступ к доске</Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <FormGroup>
-              {users.map(({ id, label }) => (
-                <FormControlLabel
-                  key={id}
-                  control={
-                    <Checkbox name={String(id)} onChange={handleOnchangeAutoCompleteAddBoards} />
+        <ModalWrapper>
+          <TextField id="standard-basic" label="Название Доски" variant="standard" name="name" onChange={handleOnchangeInputAddBoards} />
+          <Accordion className={styles.accordion}>
+            <AccordionSummary
+              aria-controls="panel1a-content"
+              id="panel1a-header"
+            >
+              <Typography>Разрешите доступ к доске</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <FormGroup>
+                {users.map(({ id, label }) => (
+                  <FormControlLabel
+                    key={id}
+                    control={
+                      <Checkbox name={String(id)} onChange={handleAddUsersForBoard} />
             }
-                  label={label}
-                />
-              ))}
-            </FormGroup>
-          </AccordionDetails>
-        </Accordion>
-        <Box className={styles.buttonContainer}>
-          <Button variant="contained">Создать</Button>
-          <Button variant="outlined">Отменить</Button>
-        </Box>
+                    label={label}
+                  />
+                ))}
+              </FormGroup>
+            </AccordionDetails>
+          </Accordion>
+          <ModalFooter
+            disabled={!newBoard?.name}
+            handleClose={handleClose}
+            handleCreate={handleCreateBoard}
+          />
+        </ModalWrapper>
       </DialogContent>
     </Dialog>
   );

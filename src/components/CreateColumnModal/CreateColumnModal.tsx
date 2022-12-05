@@ -1,36 +1,79 @@
-import { Box, Modal, Typography } from '@mui/material';
-import React, { FC } from 'react';
+import React, {
+  ChangeEvent, FC, useContext, useState,
+} from 'react';
+import {
+  Autocomplete, Dialog, DialogContent, DialogTitle, TextField,
+} from '@mui/material';
+import { Board, ColumsFromBackendProps } from '../../types';
+import { JusticeTaskManagerContext } from '../JusticeTaskManagerContext';
+import { ModalFooter } from '../ModalFooter';
+import { ModalWrapper } from '../ModalWrapper';
 
 interface CreateColumnModalProps {
   open: boolean
   handleClose: () => void
 }
 
-const style = {
-  position: 'absolute' as 'absolute',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
-  width: 400,
-  bgcolor: 'background.paper',
-  boxShadow: 24,
-  p: 4,
-};
+export const CreateColumnModal: FC<CreateColumnModalProps> = ({ open, handleClose }) => {
+  const { boards, addColumns } = useContext(JusticeTaskManagerContext);
+  const [newColumn, setNewColumn] = useState({});
 
-export const CreateColumnModal: FC<CreateColumnModalProps> = ({ open, handleClose }) => (
-  <Modal
-    open={open}
-    onClose={handleClose}
-    aria-labelledby="modal-modal-title"
-    aria-describedby="modal-modal-description"
-  >
-    <Box sx={style}>
-      <Typography id="modal-modal-title" variant="h6" component="h2">
-        Text in a modal
-      </Typography>
-      <Typography id="modal-modal-description" sx={{ mt: 2 }}>
-        CreateColumnModal
-      </Typography>
-    </Box>
-  </Modal>
-);
+  const handleOnChangeInputAddColumn = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
+
+    setNewColumn((prevState) => ({
+      ...prevState,
+      id: String(Date.now()),
+      [name]: value,
+    }));
+  };
+
+  const handleAutoCompleteAddColumn = (board: Board | null) => {
+    if (!board) return;
+
+    const { id } = board;
+
+    setNewColumn((prevState) => ({
+      ...prevState,
+      boardId: id,
+      items: [],
+    }));
+  };
+
+  const createColumn = () => {
+    addColumns(newColumn as ColumsFromBackendProps);
+    handleClose();
+  };
+
+  return (
+    <Dialog
+      open={open}
+      onClose={handleClose}
+      aria-labelledby="modal-modal-title"
+      aria-describedby="modal-modal-description"
+      maxWidth="sm"
+      fullWidth
+    >
+      <DialogTitle>Добавить новую колонку</DialogTitle>
+      <DialogContent>
+        <ModalWrapper>
+          <TextField id="standard-basic" label="Название колонки" variant="standard" name="name" onChange={handleOnChangeInputAddColumn} />
+          <Autocomplete
+            onChange={(_event: any, board: Board | null) => handleAutoCompleteAddColumn(board)}
+            disablePortal
+            id="combo-box-demo"
+            options={boards}
+            getOptionLabel={(option) => option.name}
+            sx={{ width: 300 }}
+            renderInput={(params) => <TextField {...params} label="Доски" />}
+          />
+          <ModalFooter
+            disabled={false}
+            handleClose={handleClose}
+            handleCreate={createColumn}
+          />
+        </ModalWrapper>
+      </DialogContent>
+    </Dialog>
+  );
+};

@@ -41,10 +41,16 @@ export const JusticeDrawer: FC<JusticeDrawerProps> = ({ children }) => {
 
   const handleActionClickButton = (link: string | null, id: number) => {
     if (link) navigation(link);
-    if (id === 2) handleOpenAddBoard();
-    if (id === 3) handleOpenAddColumn();
-    if (id === 4) handleOpenAddTask();
-    console.log(id);
+
+    switch (id) {
+      case 2: handleOpenAddBoard();
+        break;
+      case 3: handleOpenAddColumn();
+        break;
+      case 4: handleOpenAddTask();
+        break;
+      default:
+    }
   };
 
   const drawer = (

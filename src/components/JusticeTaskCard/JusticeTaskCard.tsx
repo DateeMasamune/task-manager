@@ -9,7 +9,7 @@ interface JusticeTaskCardProps {
   providedItem: DraggableProvided
   snapshotItem: DraggableStateSnapshot
   content: string
-  itemId: number
+  itemId: string
 }
 
 export const JusticeTaskCard: FC<JusticeTaskCardProps> = ({

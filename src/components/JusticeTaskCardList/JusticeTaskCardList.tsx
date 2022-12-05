@@ -5,13 +5,13 @@ import {
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 
 import { JusticeTaskCard } from '../JusticeTaskCard/JusticeTaskCard';
+import { ItemsFromBackendProps } from '../../types';
 
 import styles from './styles.module.scss';
-import { ItemsFromBackendProps } from '../../types';
 
 interface JusticeTaskCardListProps {
   items: ItemsFromBackendProps[]
-  id: number
+  id: string
 }
 
 export const JusticeTaskCardList: FC<JusticeTaskCardListProps> = ({ items, id }) => (

@@ -29,7 +29,7 @@ export const theme = createTheme({
       styleOverrides: {
         paper: {
           background: 'white',
-          // overflow: 'unset',
+          overflow: 'unset',
           color: 'black',
         },
       },

@@ -6,20 +6,20 @@ export interface Board {
 }
 
 export interface Users {
-  id: number,
+  id: string,
   label: string,
 }
 
 export interface ItemsFromBackendProps {
-  id: number
+  id: string
   content: string
   columnId: number
 }
 
 export interface ColumsFromBackendProps {
-  id: number
-  boardId: number
+  id: string
   name: string
+  boardId: number
   items: ItemsFromBackendProps[]
 }
 
