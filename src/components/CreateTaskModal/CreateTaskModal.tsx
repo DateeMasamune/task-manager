@@ -5,7 +5,7 @@ import {
   Autocomplete, Dialog, DialogContent, DialogTitle, TextField,
 } from '@mui/material';
 
-import { Board, ColumsFromBackendProps, ItemsFromBackendProps } from '../../types';
+import { Board, Column, Task } from '../../types';
 import { JusticeTaskManagerContext } from '../JusticeTaskManagerContext';
 import { ModalFooter } from '../ModalFooter';
 import { ModalWrapper } from '../ModalWrapper';
@@ -17,7 +17,7 @@ interface CreateTaskModalProps {
 
 export const CreateTaskModal: FC<CreateTaskModalProps> = ({ open, handleClose }) => {
   const { boards, columns, addTasks } = useContext(JusticeTaskManagerContext);
-  const [newTask, setNewTask] = useState({} as ItemsFromBackendProps);
+  const [newTask, setNewTask] = useState({} as Task);
   const [boardSelected, setBoardSelected] = useState<string | null>(null);
 
   const handleOnChangeAddTask = (event: ChangeEvent<HTMLInputElement>) => {
@@ -34,7 +34,7 @@ export const CreateTaskModal: FC<CreateTaskModalProps> = ({ open, handleClose })
     setBoardSelected(board ? board.id : null);
   };
 
-  const handleAutoCompleteAddTask = (column: ColumsFromBackendProps | null) => {
+  const handleAutoCompleteAddTask = (column: Column | null) => {
     if (column) {
       const { id } = column;
       setNewTask((prevState) => ({
@@ -52,7 +52,7 @@ export const CreateTaskModal: FC<CreateTaskModalProps> = ({ open, handleClose })
   };
 
   const createTask = () => {
-    addTasks(newTask);
+    addTasks(newTask, boardSelected);
     handleClose();
   };
 
@@ -80,10 +80,10 @@ export const CreateTaskModal: FC<CreateTaskModalProps> = ({ open, handleClose })
           />
           <Autocomplete
             disabled={!boardSelected}
-            onChange={(_event: any, column: ColumsFromBackendProps | null) => handleAutoCompleteAddTask(column)}
+            onChange={(_event: any, column: Column | null) => handleAutoCompleteAddTask(column)}
             disablePortal
             id="combo-box-demo"
-            options={columns.filter(({ boardId }) => boardSelected === boardId)}
+            options={boardSelected ? columns[boardSelected] : []}
             getOptionLabel={(option) => option.name}
             sx={{ width: 300 }}
             renderInput={(params) => <TextField {...params} label="Колонки" />}

@@ -1,33 +1,43 @@
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { Box } from '@mui/material';
 import {
   DragDropContext, Droppable, DropResult,
 } from 'react-beautiful-dnd';
+import { useParams } from 'react-router-dom';
 import { JusticeColumns } from '../JusticeColumn';
 
 import styles from './styles.module.scss';
-import { ColumsFromBackendProps } from '../../types';
-import { columsFromBackendMock } from '../../mock';
+import { Column } from '../../types';
+import { JusticeTaskManagerContext } from '../JusticeTaskManagerContext';
 
 export const JusticeBoard = () => {
-  const [columns, setColumns] = useState<ColumsFromBackendProps[]>(columsFromBackendMock);
+  const [currentColumns, setCurrentColumns] = useState<Column[]>([]);
+  const { id: paramId } = useParams();
+
+  const { columns } = useContext(JusticeTaskManagerContext);
+
+  useEffect(() => {
+    if (paramId && columns) {
+      setCurrentColumns(columns[paramId] ?? []);
+    }
+  }, [paramId, columns]);
 
   const handlerOnDragEnd = (result: DropResult) => {
     const { source, destination } = result;
 
     if (!destination) return;
 
-    const sourceColumn = columns.find(({ id }) => String(id) === source.droppableId);
-    const destColumn = columns.find(({ id }) => String(id) === destination.droppableId);
+    const sourceColumn = currentColumns.find(({ id }) => String(id) === source.droppableId);
+    const destColumn = currentColumns.find(({ id }) => String(id) === destination.droppableId);
 
-    const dragColumn = [...columns];
+    const dragColumn = [...currentColumns];
 
     const [removedColumn] = dragColumn.splice(source.index, 1);
     dragColumn.splice(destination.index, 0, removedColumn);
 
-    setColumns(dragColumn);
+    setCurrentColumns(dragColumn); // перетаскивание колонок
 
-    if (source.droppableId !== destination.droppableId) {
+    if (source.droppableId !== destination.droppableId) { // перетаскивание между колонками
       if (sourceColumn && destColumn) {
         const swapSourceItems = [...sourceColumn.items];
         const swapDestinationItems = [...destColumn.items];
@@ -35,11 +45,11 @@ export const JusticeBoard = () => {
         const [removedTaskFromColumn] = swapSourceItems.splice(source.index, 1);
         swapDestinationItems.splice(destination.index, 0, removedTaskFromColumn);
 
-        const columnDestination = columns.find(({ id }) => String(id) === destination.droppableId);
-        const columnSource = columns.find(({ id }) => String(id) === source.droppableId);
+        const columnDestination = currentColumns.find(({ id }) => String(id) === destination.droppableId);
+        const columnSource = currentColumns.find(({ id }) => String(id) === source.droppableId);
 
         if (columnDestination && columnSource) {
-          const updateColumns = columns.map((item) => {
+          const updateColumns = currentColumns.map((item) => {
             if (item.id === columnDestination.id) {
               return {
                 ...columnDestination,
@@ -57,15 +67,15 @@ export const JusticeBoard = () => {
             return item;
           });
 
-          setColumns(updateColumns);
+          setCurrentColumns(updateColumns);
         }
       }
-    } else if (sourceColumn) {
+    } else if (sourceColumn) { // перетаскивание внутри колонки
       const swapPlaces = [...sourceColumn.items];
       const [removed] = swapPlaces.splice(source.index, 1);
       swapPlaces.splice(destination.index, 0, removed);
 
-      const updateColumns = columns.map((item) => {
+      const updateColumns = currentColumns.map((item) => {
         if (item.id === sourceColumn.id) {
           return {
             ...sourceColumn,
@@ -76,7 +86,7 @@ export const JusticeBoard = () => {
         return item;
       });
 
-      setColumns(updateColumns);
+      setCurrentColumns(updateColumns);
     }
   };
 
@@ -89,7 +99,7 @@ export const JusticeBoard = () => {
             {...provided.droppableProps}
             ref={provided.innerRef}
           >
-            <JusticeColumns columns={columns} />
+            <JusticeColumns columns={currentColumns} />
             {provided.placeholder}
           </Box>
         )}

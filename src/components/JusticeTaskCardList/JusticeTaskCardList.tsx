@@ -5,12 +5,12 @@ import {
 import { Draggable, Droppable } from 'react-beautiful-dnd';
 
 import { JusticeTaskCard } from '../JusticeTaskCard/JusticeTaskCard';
-import { ItemsFromBackendProps } from '../../types';
+import { Task } from '../../types';
 
 import styles from './styles.module.scss';
 
 interface JusticeTaskCardListProps {
-  items: ItemsFromBackendProps[]
+  items: Task[]
   id: string
 }
 

@@ -17,7 +17,7 @@ export const AllBoards = () => {
   return (
     <Box className={styles.wrapperAllBoards}>
       {boards.map(({ id, name }) => (
-        <Card key={id} className={styles.card} onClick={() => navigation(`${AllBOARDS}/id`)}>
+        <Card key={id} className={styles.card} onClick={() => navigation(`${AllBOARDS}/${id}`)}>
           <CardContent>
             <Typography>
               {name}

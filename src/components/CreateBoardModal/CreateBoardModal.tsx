@@ -78,13 +78,13 @@ export const CreateBoardModal: FC<CreateBoardModalProps> = ({ open, handleClose 
             </AccordionSummary>
             <AccordionDetails>
               <FormGroup>
-                {users.map(({ id, label }) => (
+                {users.map(({ id, name }) => (
                   <FormControlLabel
                     key={id}
                     control={
                       <Checkbox name={String(id)} onChange={handleAddUsersForBoard} />
             }
-                    label={label}
+                    label={name}
                   />
                 ))}
               </FormGroup>

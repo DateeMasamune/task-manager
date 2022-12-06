@@ -4,10 +4,10 @@ import { Draggable } from 'react-beautiful-dnd';
 import { JusticeTaskCardList } from '../JusticeTaskCardList';
 
 import styles from './styles.module.scss';
-import { ColumsFromBackendProps } from '../../types';
+import { Column } from '../../types';
 
 interface JusticeColumnsProps {
-  columns: ColumsFromBackendProps[]
+  columns: Column[]
 }
 
 export const JusticeColumns: FC<JusticeColumnsProps> = ({ columns }) => (

@@ -1,19 +1,19 @@
 import {
-  Board, ColumsFromBackendProps, ItemsFromBackendProps, Users,
+  Board, Column, Task, User,
 } from './types';
 
-export const usersMock: Users[] = [
+export const usersMock: User[] = [
   {
     id: '1',
-    label: 'Dima',
+    name: 'Dima',
   },
   {
     id: '2',
-    label: 'Misha',
+    name: 'Misha',
   },
   {
     id: '3',
-    label: 'Stas',
+    name: 'Stas',
   },
 ];
 
@@ -62,7 +62,7 @@ export const boardsMock: Board[] = [
   },
 ];
 
-export const itemsFromBackendMock: ItemsFromBackendProps[] = [
+export const itemsFromBackendMock: Task[] = [
   {
     id: '1',
     columnId: '7',
@@ -75,7 +75,7 @@ export const itemsFromBackendMock: ItemsFromBackendProps[] = [
   },
 ];
 
-export const itemsTwoFromBackendMock: ItemsFromBackendProps[] = [
+export const itemsTwoFromBackendMock: Task[] = [
   {
     id: '3',
     columnId: '7',
@@ -88,7 +88,7 @@ export const itemsTwoFromBackendMock: ItemsFromBackendProps[] = [
   },
 ];
 
-export const itemsThreeFromBackendMock: ItemsFromBackendProps[] = [
+export const itemsThreeFromBackendMock: Task[] = [
   {
     id: '5',
     columnId: '7',
@@ -101,7 +101,7 @@ export const itemsThreeFromBackendMock: ItemsFromBackendProps[] = [
   },
 ];
 
-export const columsFromBackendMock: ColumsFromBackendProps[] = [
+export const columsFromBackendMock: Column[] = [
   {
     id: '7',
     boardId: '1',

@@ -4,7 +4,7 @@ import React, {
 import {
   Autocomplete, Dialog, DialogContent, DialogTitle, TextField,
 } from '@mui/material';
-import { Board, ColumsFromBackendProps } from '../../types';
+import { Board, Column } from '../../types';
 import { JusticeTaskManagerContext } from '../JusticeTaskManagerContext';
 import { ModalFooter } from '../ModalFooter';
 import { ModalWrapper } from '../ModalWrapper';
@@ -16,7 +16,7 @@ interface CreateColumnModalProps {
 
 export const CreateColumnModal: FC<CreateColumnModalProps> = ({ open, handleClose }) => {
   const { boards, addColumns } = useContext(JusticeTaskManagerContext);
-  const [newColumn, setNewColumn] = useState({} as ColumsFromBackendProps);
+  const [newColumn, setNewColumn] = useState({} as Column);
 
   const handleOnChangeInputAddColumn = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -50,6 +50,7 @@ export const CreateColumnModal: FC<CreateColumnModalProps> = ({ open, handleClos
   const createColumn = () => {
     addColumns(newColumn);
     handleClose();
+    setNewColumn({} as Column);
   };
 
   return (

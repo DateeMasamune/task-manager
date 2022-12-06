@@ -5,24 +5,24 @@ export interface Board {
   rootUser: string,
 }
 
-export interface Users {
+export interface User {
   id: string,
-  label: string,
+  name: string,
 }
 
-export interface ItemsFromBackendProps {
+export interface Task {
   id: string
   content: string
   columnId: string
 }
 
-export interface ColumsFromBackendProps {
+export interface Column {
   id: string
   name: string
   boardId: string
-  items: ItemsFromBackendProps[]
+  items: Task[]
 }
 
-export interface JusticeColumnsProps {
-  columns: ColumsFromBackendProps[]
+export interface FrontendMappingColumn {
+  [key: string]: Column[]
 }
