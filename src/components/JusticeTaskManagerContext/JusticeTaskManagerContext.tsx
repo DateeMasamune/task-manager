@@ -1,7 +1,7 @@
 import React, {
   createContext, FC, ReactNode, useEffect, useMemo, useState,
 } from 'react';
-import { boardsMock, columsFromBackendMock, usersMock } from '../../mock';
+import { columsFromBackendMock, usersMock } from '../../mock';
 import {
   Board, Column, FrontendMappingColumn, Task, User,
 } from '../../types';
@@ -19,6 +19,8 @@ interface JusticeTaskManagerContextProps {
   addTasks: (task: Task, idBoard: string | null) => void
   // eslint-disable-next-line no-unused-vars
   addUsers: (user: User) => void
+  // eslint-disable-next-line no-unused-vars
+  updateColumns: (modifiedColumns: Column[], idBoard: string) => void
 }
 
 interface JusticeTaskManagerContextProviderProps {
@@ -30,7 +32,7 @@ export const JusticeTaskManagerContext = createContext<JusticeTaskManagerContext
 export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProviderProps> = ({ children }) => {
   const [columnsFromBackend] = useState<Column[]>(columsFromBackendMock);
 
-  const [boards, setBoards] = useState<Board[]>(boardsMock);
+  const [boards, setBoards] = useState<Board[]>([]);
   const [columns, setColumns] = useState<FrontendMappingColumn>({});
   const [tasks, setTasks] = useState<Task[]>([]); // TODO возможно придется отказаться
   const [users, setUsers] = useState<User[]>(usersMock);
@@ -46,19 +48,28 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
     }));
   };
 
+  const updateColumns = (modifiedColumns: Column[], idBoard: string) => {
+    if (!idBoard) return;
+
+    setColumns((prevState) => ({
+      ...prevState,
+      [idBoard]: modifiedColumns,
+    }));
+  };
+
   const addTasks = (task: Task, idBoard: string | null) => {
     if (!idBoard) return;
 
-    const newTask = columns[idBoard].find(({ id }) => id === task.columnId);
-    newTask?.items.push(task);
+    const insertTask = columns[idBoard].find(({ id }) => id === task.columnId);
+    insertTask?.items.push(task);
 
     setTasks((prevState) => ([...prevState, task]));
 
     setColumns((prevState) => ({
       ...prevState,
       [idBoard]: prevState[idBoard].map((column) => {
-        if (column.id === newTask?.id) {
-          return newTask;
+        if (column.id === insertTask?.id) {
+          return insertTask;
         }
         return column;
       }),
@@ -69,17 +80,16 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
     setUsers((prevState) => ([...prevState, user]));
   };
 
-  const test = () => {
+  const generateStructForFrontendMapping = () => {
     const struct: FrontendMappingColumn = {};
     columnsFromBackend.forEach((column) => {
       struct[column?.boardId] = struct[column?.boardId] ? [...struct[column?.boardId], column] : [column];
     });
-    console.log('struct', struct);
     setColumns(struct);
   };
 
   useEffect(() => {
-    test();
+    generateStructForFrontendMapping();
   }, [columnsFromBackend]);
 
   const justiceTaskManagerContextValue = useMemo(() => ({
@@ -91,6 +101,7 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
     addColumns,
     addTasks,
     addUsers,
+    updateColumns,
   }), [boards, columns, tasks, users]);
 
   return (

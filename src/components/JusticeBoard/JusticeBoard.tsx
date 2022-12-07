@@ -5,22 +5,16 @@ import {
 } from 'react-beautiful-dnd';
 import { useParams } from 'react-router-dom';
 import { JusticeColumns } from '../JusticeColumn';
-
-import styles from './styles.module.scss';
 import { Column } from '../../types';
 import { JusticeTaskManagerContext } from '../JusticeTaskManagerContext';
+
+import styles from './styles.module.scss';
 
 export const JusticeBoard = () => {
   const [currentColumns, setCurrentColumns] = useState<Column[]>([]);
   const { id: paramId } = useParams();
 
-  const { columns } = useContext(JusticeTaskManagerContext);
-
-  useEffect(() => {
-    if (paramId && columns) {
-      setCurrentColumns(columns[paramId] ?? []);
-    }
-  }, [paramId, columns]);
+  const { columns, updateColumns } = useContext(JusticeTaskManagerContext);
 
   const handlerOnDragEnd = (result: DropResult) => {
     const { source, destination } = result;
@@ -29,13 +23,6 @@ export const JusticeBoard = () => {
 
     const sourceColumn = currentColumns.find(({ id }) => String(id) === source.droppableId);
     const destColumn = currentColumns.find(({ id }) => String(id) === destination.droppableId);
-
-    const dragColumn = [...currentColumns];
-
-    const [removedColumn] = dragColumn.splice(source.index, 1);
-    dragColumn.splice(destination.index, 0, removedColumn);
-
-    setCurrentColumns(dragColumn); // перетаскивание колонок
 
     if (source.droppableId !== destination.droppableId) { // перетаскивание между колонками
       if (sourceColumn && destColumn) {
@@ -49,7 +36,7 @@ export const JusticeBoard = () => {
         const columnSource = currentColumns.find(({ id }) => String(id) === source.droppableId);
 
         if (columnDestination && columnSource) {
-          const updateColumns = currentColumns.map((item) => {
+          const updatePositionTaskColumns = currentColumns.map((item) => {
             if (item.id === columnDestination.id) {
               return {
                 ...columnDestination,
@@ -67,7 +54,10 @@ export const JusticeBoard = () => {
             return item;
           });
 
-          setCurrentColumns(updateColumns);
+          if (paramId) {
+            setCurrentColumns(updatePositionTaskColumns);
+            updateColumns(updatePositionTaskColumns, paramId);
+          }
         }
       }
     } else if (sourceColumn) { // перетаскивание внутри колонки
@@ -75,7 +65,7 @@ export const JusticeBoard = () => {
       const [removed] = swapPlaces.splice(source.index, 1);
       swapPlaces.splice(destination.index, 0, removed);
 
-      const updateColumns = currentColumns.map((item) => {
+      const updatePositionTaskColumns = currentColumns.map((item) => {
         if (item.id === sourceColumn.id) {
           return {
             ...sourceColumn,
@@ -86,9 +76,28 @@ export const JusticeBoard = () => {
         return item;
       });
 
-      setCurrentColumns(updateColumns);
+      if (paramId) {
+        setCurrentColumns(updatePositionTaskColumns);
+        updateColumns(updatePositionTaskColumns, paramId);
+      }
+    } else {
+      const dragColumn = [...currentColumns];
+
+      const [removedColumn] = dragColumn.splice(source.index, 1);
+      dragColumn.splice(destination.index, 0, removedColumn);
+
+      if (paramId) { // перетаскивание колонок
+        updateColumns(dragColumn, paramId);
+        setCurrentColumns(dragColumn);
+      }
     }
   };
+
+  useEffect(() => {
+    if (paramId && columns) {
+      setCurrentColumns(columns[paramId] ?? []);
+    }
+  }, [paramId, columns]);
 
   return (
     <DragDropContext onDragEnd={handlerOnDragEnd}>

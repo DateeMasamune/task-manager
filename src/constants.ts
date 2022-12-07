@@ -1,6 +1,8 @@
 export const routes = {
   MAIN: '/',
   AllBOARDS: '/AllBoards',
+  REGISTRATION: '/registration',
+  LOGIN: '/login',
 };
 
 export const menuList = [

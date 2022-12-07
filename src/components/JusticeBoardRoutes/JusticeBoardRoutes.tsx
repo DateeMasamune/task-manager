@@ -4,8 +4,12 @@ import { routes } from '../../constants';
 import { AllBoards } from '../AllBoards';
 import { JusticeBoard } from '../JusticeBoard';
 import { JusticeDrawer } from '../JusticeDrawer';
+import { Login } from '../Login';
+import { Registration } from '../Registration';
 
-const { MAIN, AllBOARDS } = routes;
+const {
+  MAIN, AllBOARDS, REGISTRATION, LOGIN,
+} = routes;
 
 export const JusticeBoardRoutes = () => (
   <BrowserRouter>
@@ -24,6 +28,18 @@ export const JusticeBoardRoutes = () => (
           <JusticeDrawer>
             <JusticeBoard />
           </JusticeDrawer>
+        )}
+      />
+      <Route
+        path={REGISTRATION}
+        element={(
+          <Registration />
+        )}
+      />
+      <Route
+        path={LOGIN}
+        element={(
+          <Login />
         )}
       />
     </Routes>
