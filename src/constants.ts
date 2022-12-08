@@ -1,3 +1,5 @@
+import { AUTH_FIELDS_PROPS } from './types';
+
 export const routes = {
   MAIN: '/',
   AllBOARDS: '/AllBoards',
@@ -32,3 +34,17 @@ export const menuList = [
     link: null,
   },
 ];
+
+export const AUTH_FIELDS: AUTH_FIELDS_PROPS = {
+  FIRST_NAME: 'firstName',
+  LAST_NAME: 'lastName',
+  PASSWORD: 'password',
+  EMAIL: 'email',
+};
+
+export const AUTH_VALIDATIONS = {
+  USERNAME_MAX_LENGTH: 30,
+  USERNAME_MIN_LENGTH: 2,
+  PASSWORD_MAX_LENGTH: 30,
+  PASSWORD_MIN_LENGTH: 6,
+};

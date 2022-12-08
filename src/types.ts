@@ -26,3 +26,10 @@ export interface Column {
 export interface FrontendMappingColumn {
   [key: string]: Column[]
 }
+
+export interface AUTH_FIELDS_PROPS {
+  FIRST_NAME: 'firstName',
+  LAST_NAME: 'lastName',
+  PASSWORD: 'password',
+  EMAIL: 'email',
+}

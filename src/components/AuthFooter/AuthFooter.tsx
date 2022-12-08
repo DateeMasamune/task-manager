@@ -6,17 +6,19 @@ import styles from './styles.module.scss';
 interface AuthFooterProps {
   buttonNames: string[]
   variants: 'black'[]
-  handleActions: Array<() => void>
+  handleActions: () => void
+  disabled: boolean
 }
 
-export const AuthFooter: FC<AuthFooterProps> = ({ buttonNames, handleActions, variants }) => {
+export const AuthFooter: FC<AuthFooterProps> = ({
+  buttonNames, handleActions, variants, disabled,
+}) => {
   const [variantOne, variantTwo] = variants;
-  const [actionOne, actionTwo] = handleActions;
   const [nameOne, nameTwo] = buttonNames;
   return (
     <Box className={styles.wrapperAuthFooter}>
-      <Button variant={variantOne} onClick={actionOne}>{nameOne}</Button>
-      <Button variant={variantTwo} onClick={actionTwo}>{nameTwo}</Button>
+      <Button disabled={disabled} type="submit" variant={variantOne}>{nameOne}</Button>
+      <Button variant={variantTwo} onClick={handleActions}>{nameTwo}</Button>
     </Box>
   );
 };

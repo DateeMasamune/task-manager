@@ -63,6 +63,10 @@ export const theme = createTheme({
             '&:hover': {
               backgroundColor: '#01074f',
             },
+            '&.Mui-disabled': {
+              backgroundColor: '#959595',
+              color: '#535353',
+            },
           },
         },
       ],
