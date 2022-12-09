@@ -6,12 +6,15 @@ import { JusticeBoardRoutes } from './components/JusticeBoardRoutes';
 
 import './index.css';
 import { JusticeTaskManagerContextProvider } from './components/JusticeTaskManagerContext';
+import { SnackbarContextProvider } from './components/SnackbarContext';
 
 function App() {
   return (
     <ThemeProvider theme={theme}>
       <JusticeTaskManagerContextProvider>
-        <JusticeBoardRoutes />
+        <SnackbarContextProvider>
+          <JusticeBoardRoutes />
+        </SnackbarContextProvider>
       </JusticeTaskManagerContextProvider>
     </ThemeProvider>
   );

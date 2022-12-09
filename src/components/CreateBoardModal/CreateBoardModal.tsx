@@ -13,6 +13,7 @@ import { ModalWrapper } from '../ModalWrapper';
 import { ModalFooter } from '../ModalFooter';
 
 import styles from './styles.module.scss';
+import { SnackbarContext } from '../SnackbarContext';
 
 interface CreateBoardModalProps {
   open: boolean
@@ -22,6 +23,7 @@ interface CreateBoardModalProps {
 export const CreateBoardModal: FC<CreateBoardModalProps> = ({ open, handleClose }) => {
   const [newBoard, setNewBoard] = useState({} as Board);
   const { users, addBoards } = useContext(JusticeTaskManagerContext);
+  const { addSnackbar } = useContext(SnackbarContext);
 
   const handleOnchangeInputAddBoards = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -52,6 +54,13 @@ export const CreateBoardModal: FC<CreateBoardModalProps> = ({ open, handleClose 
   const handleCreateBoard = () => {
     addBoards(newBoard);
     handleClose();
+    addSnackbar({
+      open: true,
+      message: 'GOOD PUSH',
+      vertical: 'top',
+      horizontal: 'center',
+      type: 'notification',
+    });
   };
 
   return (

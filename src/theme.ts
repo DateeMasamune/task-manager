@@ -71,5 +71,16 @@ export const theme = createTheme({
         },
       ],
     },
+    MuiAlert: {
+      variants: [
+        {
+          props: { severity: 'error' },
+          style: {
+            background: 'red',
+            color: 'white',
+          },
+        },
+      ],
+    },
   },
 });
