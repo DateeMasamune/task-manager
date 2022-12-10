@@ -1,0 +1,50 @@
+"""Exposes a URL that specifies the behavior of this scalar."""
+directive @specifiedBy(
+  """The URL that specifies the behavior of this scalar."""
+  url: String!
+) on SCALAR
+
+type Board {
+  id: ID!
+  name: String!
+  users: [ID!]
+  rootUser: User!
+}
+
+type Column {
+  id: ID!
+  name: String!
+  boardId: ID!
+  items: [Task]
+}
+
+scalar JSON
+
+type Mutation {
+  register(firstName: String!, lastName: String!, email: String!, password: String!): User
+  login(email: String!, password: String!): Token
+}
+
+type Query {
+  getUsers: User
+}
+
+type Task {
+  id: ID!
+  content: String!
+  columnId: ID!
+}
+
+type Token {
+  User: User
+  token: String!
+}
+
+type User {
+  id: ID!
+  firstName: String!
+  lastName: String!
+  email: String!
+  password: String!
+}
+

@@ -7,7 +7,9 @@ export interface Board {
 
 export interface User {
   id: string,
-  name: string,
+  lastName: string,
+  firstName: string,
+  email: string
 }
 
 export interface Task {

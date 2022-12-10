@@ -5,15 +5,21 @@ import {
 export const usersMock: User[] = [
   {
     id: '1',
-    name: 'Dima',
+    firstName: 'Dima',
+    lastName: '',
+    email: '',
   },
   {
     id: '2',
-    name: 'Misha',
+    firstName: 'Misha',
+    lastName: '',
+    email: '',
   },
   {
     id: '3',
-    name: 'Stas',
+    firstName: 'Stas',
+    lastName: '',
+    email: '',
   },
 ];
 
