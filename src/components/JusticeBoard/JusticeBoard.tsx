@@ -5,49 +5,51 @@ import {
 } from 'react-beautiful-dnd';
 import { useParams } from 'react-router-dom';
 import { JusticeColumns } from '../JusticeColumn';
-import { Column } from '../../types';
+import { Board } from '../../types';
 import { JusticeTaskManagerContext } from '../JusticeTaskManagerContext';
 
 import styles from './styles.module.scss';
 
 export const JusticeBoard = () => {
-  const [currentColumns, setCurrentColumns] = useState<Column[]>([]);
+  const [currentBoard, setCurrentBoard] = useState<Board>({} as Board);
   const { id: paramId } = useParams();
 
-  const { columns, updateColumns } = useContext(JusticeTaskManagerContext);
+  const {
+    boards, updateColumns, updateBoard,
+  } = useContext(JusticeTaskManagerContext);
 
   const handlerOnDragEnd = (result: DropResult) => {
     const { source, destination } = result;
 
     if (!destination) return;
 
-    const sourceColumn = currentColumns.find(({ id }) => String(id) === source.droppableId);
-    const destColumn = currentColumns.find(({ id }) => String(id) === destination.droppableId);
+    const sourceColumn = currentBoard.columns.find(({ id }) => String(id) === source.droppableId);
+    const destColumn = currentBoard.columns.find(({ id }) => String(id) === destination.droppableId);
 
     if (source.droppableId !== destination.droppableId) { // перетаскивание между колонками
       if (sourceColumn && destColumn) {
-        const swapSourceItems = [...sourceColumn.items];
-        const swapDestinationItems = [...destColumn.items];
+        const swapSourceItems = [...sourceColumn.tasks];
+        const swapDestinationItems = [...destColumn.tasks];
 
         const [removedTaskFromColumn] = swapSourceItems.splice(source.index, 1);
         swapDestinationItems.splice(destination.index, 0, removedTaskFromColumn);
 
-        const columnDestination = currentColumns.find(({ id }) => String(id) === destination.droppableId);
-        const columnSource = currentColumns.find(({ id }) => String(id) === source.droppableId);
+        const columnDestination = currentBoard.columns.find(({ id }) => String(id) === destination.droppableId);
+        const columnSource = currentBoard.columns.find(({ id }) => String(id) === source.droppableId);
 
         if (columnDestination && columnSource) {
-          const updatePositionTaskColumns = currentColumns.map((item) => {
+          const updatePositionTaskColumns = currentBoard.columns.map((item) => {
             if (item.id === columnDestination.id) {
               return {
                 ...columnDestination,
-                items: swapDestinationItems,
+                tasks: swapDestinationItems,
               };
             }
 
             if (item.id === columnSource.id) {
               return {
                 ...columnSource,
-                items: swapSourceItems,
+                tasks: swapSourceItems,
               };
             }
 
@@ -55,21 +57,27 @@ export const JusticeBoard = () => {
           });
 
           if (paramId) {
-            setCurrentColumns(updatePositionTaskColumns);
-            updateColumns(updatePositionTaskColumns, paramId);
+            setCurrentBoard((prevState) => ({
+              ...prevState,
+              columns: updatePositionTaskColumns,
+            }));
+            updateBoard({
+              ...currentBoard,
+              columns: updatePositionTaskColumns,
+            });
           }
         }
       }
     } else if (sourceColumn) { // перетаскивание внутри колонки
-      const swapPlaces = [...sourceColumn.items];
+      const swapPlaces = [...sourceColumn.tasks];
       const [removed] = swapPlaces.splice(source.index, 1);
       swapPlaces.splice(destination.index, 0, removed);
 
-      const updatePositionTaskColumns = currentColumns.map((item) => {
+      const updatePositionTaskColumns = currentBoard.columns.map((item) => {
         if (item.id === sourceColumn.id) {
           return {
             ...sourceColumn,
-            items: swapPlaces,
+            tasks: swapPlaces,
           };
         }
 
@@ -77,27 +85,40 @@ export const JusticeBoard = () => {
       });
 
       if (paramId) {
-        setCurrentColumns(updatePositionTaskColumns);
-        updateColumns(updatePositionTaskColumns, paramId);
+        setCurrentBoard((prevState) => ({
+          ...prevState,
+          columns: updatePositionTaskColumns,
+        }));
+        updateBoard({
+          ...currentBoard,
+          columns: updatePositionTaskColumns,
+        });
       }
     } else {
-      const dragColumn = [...currentColumns];
+      const dragColumn = [...currentBoard.columns];
 
       const [removedColumn] = dragColumn.splice(source.index, 1);
       dragColumn.splice(destination.index, 0, removedColumn);
 
       if (paramId) { // перетаскивание колонок
         updateColumns(dragColumn, paramId);
-        setCurrentColumns(dragColumn);
+        setCurrentBoard((prevState) => ({
+          ...prevState,
+          columns: dragColumn,
+        }));
       }
     }
   };
 
   useEffect(() => {
-    if (paramId && columns) {
-      setCurrentColumns(columns[paramId] ?? []);
+    if (paramId && boards) {
+      setCurrentBoard(boards.find(({ id }) => id === paramId) ?? {} as Board);
     }
-  }, [paramId, columns]);
+  }, [paramId, boards]);
+
+  useEffect(() => {
+
+  }, [currentBoard]);
 
   return (
     <DragDropContext onDragEnd={handlerOnDragEnd}>
@@ -108,7 +129,7 @@ export const JusticeBoard = () => {
             {...provided.droppableProps}
             ref={provided.innerRef}
           >
-            <JusticeColumns columns={currentColumns} />
+            <JusticeColumns columns={currentBoard?.columns} />
             {provided.placeholder}
           </Box>
         )}

@@ -10,9 +10,9 @@ interface JusticeColumnsProps {
   columns: Column[]
 }
 
-export const JusticeColumns: FC<JusticeColumnsProps> = ({ columns }) => (
+export const JusticeColumns: FC<JusticeColumnsProps> = ({ columns = [] }) => (
   <>
-    {columns.map(({ id, items, name }, index) => (
+    {columns.map(({ id, tasks, name }, index) => (
       <Draggable
         key={id}
         draggableId={String(id)}
@@ -31,7 +31,7 @@ export const JusticeColumns: FC<JusticeColumnsProps> = ({ columns }) => (
             <Box sx={{ padding: 2, textAlign: 'center' }}>
               <Typography variant="h4">{name}</Typography>
             </Box>
-            <JusticeTaskCardList items={items} id={id} />
+            <JusticeTaskCardList tasks={tasks} id={id} />
           </Box>
         )}
       </Draggable>

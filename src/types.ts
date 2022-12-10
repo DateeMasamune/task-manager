@@ -1,17 +1,3 @@
-export interface Board {
-  id: string,
-  name: string,
-  users: string[],
-  rootUser: string,
-}
-
-export interface User {
-  id: string,
-  lastName: string,
-  firstName: string,
-  email: string
-}
-
 export interface Task {
   id: string
   content: string
@@ -22,7 +8,22 @@ export interface Column {
   id: string
   name: string
   boardId: string
-  items: Task[]
+  tasks: Task[]
+}
+
+export interface Board {
+  id: string,
+  name: string,
+  users: string[],
+  rootUser: string,
+  columns: Column[]
+}
+
+export interface User {
+  id: string,
+  lastName: string,
+  firstName: string,
+  email: string
 }
 
 export interface FrontendMappingColumn {

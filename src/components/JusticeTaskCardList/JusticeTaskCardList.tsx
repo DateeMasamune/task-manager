@@ -10,11 +10,11 @@ import { Task } from '../../types';
 import styles from './styles.module.scss';
 
 interface JusticeTaskCardListProps {
-  items: Task[]
+  tasks: Task[]
   id: string
 }
 
-export const JusticeTaskCardList: FC<JusticeTaskCardListProps> = ({ items, id }) => (
+export const JusticeTaskCardList: FC<JusticeTaskCardListProps> = ({ tasks, id }) => (
   <Droppable droppableId={String(id)} key={id}>
     {(providedTask) => (
       <Box
@@ -23,7 +23,7 @@ export const JusticeTaskCardList: FC<JusticeTaskCardListProps> = ({ items, id })
         {...providedTask.innerRef}
         className={styles.wrapperJusticeTaskCardList}
       >
-        {items.map(({ id: itemId, content }, index) => (
+        {tasks.map(({ id: itemId, content }, index) => (
           <Draggable
             key={itemId}
             draggableId={String(itemId)}

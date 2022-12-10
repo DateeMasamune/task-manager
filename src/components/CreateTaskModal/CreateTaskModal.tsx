@@ -16,9 +16,9 @@ interface CreateTaskModalProps {
 }
 
 export const CreateTaskModal: FC<CreateTaskModalProps> = ({ open, handleClose }) => {
-  const { boards, columns, addTasks } = useContext(JusticeTaskManagerContext);
+  const { boards, addTasks } = useContext(JusticeTaskManagerContext);
   const [newTask, setNewTask] = useState({} as Task);
-  const [boardSelected, setBoardSelected] = useState<string | null>(null);
+  const [boardSelected, setBoardSelected] = useState<Board | null>(null);
 
   const handleOnChangeAddTask = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -31,7 +31,10 @@ export const CreateTaskModal: FC<CreateTaskModalProps> = ({ open, handleClose })
   };
 
   const handleAutoCompleteAddBoard = (board: Board | null) => {
-    setBoardSelected(board ? board.id : null);
+    const selected = boards.find(({ id }) => id === board?.id);
+    if (selected) {
+      setBoardSelected(board ? selected : null);
+    }
   };
 
   const handleAutoCompleteAddTask = (column: Column | null) => {
@@ -52,8 +55,10 @@ export const CreateTaskModal: FC<CreateTaskModalProps> = ({ open, handleClose })
   };
 
   const createTask = () => {
-    addTasks(newTask, boardSelected);
-    handleClose();
+    if (boardSelected) {
+      addTasks(newTask, boardSelected?.id);
+      handleClose();
+    }
   };
 
   return (
@@ -83,7 +88,7 @@ export const CreateTaskModal: FC<CreateTaskModalProps> = ({ open, handleClose })
             onChange={(_event: any, column: Column | null) => handleAutoCompleteAddTask(column)}
             disablePortal
             id="combo-box-demo"
-            options={boardSelected ? columns[boardSelected] : []}
+            options={boardSelected ? boardSelected.columns : []}
             getOptionLabel={(option) => option.name}
             sx={{ width: 300 }}
             renderInput={(params) => <TextField {...params} label="Колонки" />}

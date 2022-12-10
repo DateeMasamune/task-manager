@@ -7,15 +7,16 @@ directive @specifiedBy(
 type Board {
   id: ID!
   name: String!
-  users: [ID!]
-  rootUser: User!
+  users: [String]!
+  rootUser: String!
+  columns: [Column]
 }
 
 type Column {
   id: ID!
   name: String!
-  boardId: ID!
-  items: [Task]
+  boardId: String!
+  tasks: [Task]
 }
 
 scalar JSON
@@ -23,20 +24,24 @@ scalar JSON
 type Mutation {
   register(firstName: String!, lastName: String!, email: String!, password: String!): User
   login(email: String!, password: String!): Token
+  createTask(content: String!, columnId: String!): Task
+  createColumn(name: String!, boardId: String!): Column
+  createBoard(name: String!, users: [String]!, rootUser: String!): Board
 }
 
 type Query {
   getUsers: User
+  getBoard(id: String!): Board
 }
 
 type Task {
   id: ID!
   content: String!
-  columnId: ID!
+  columnId: String!
 }
 
 type Token {
-  User: User
+  User: User!
   token: String!
 }
 

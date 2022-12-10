@@ -35,12 +35,12 @@ export const CreateColumnModal: FC<CreateColumnModalProps> = ({ open, handleClos
       setNewColumn((prevState) => ({
         ...prevState,
         boardId: id,
-        items: [],
+        tasks: [],
       }));
     } else {
       // @ts-ignore
       setNewColumn((prevState) => {
-        const { boardId, items, ...rest } = prevState;
+        const { boardId, tasks, ...rest } = prevState;
 
         return rest;
       });
