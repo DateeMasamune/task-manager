@@ -1,5 +1,5 @@
 import React, {
-  ChangeEvent, FC, useContext, useState,
+  ChangeEvent, FC, useContext, useEffect, useState,
 } from 'react';
 import {
   Accordion,
@@ -7,12 +7,16 @@ import {
   AccordionSummary, Checkbox, Dialog, DialogContent, DialogTitle, FormControlLabel, FormGroup, TextField, Typography,
 } from '@mui/material';
 
+import { useMutation } from '@apollo/client';
 import { Board } from '../../types';
 import { JusticeTaskManagerContext } from '../JusticeTaskManagerContext';
 import { ModalWrapper } from '../ModalWrapper';
 import { ModalFooter } from '../ModalFooter';
 
 import styles from './styles.module.scss';
+import { CreateBoardMutationVariables, Board as BoardGQL } from '../../API';
+import { createBoard } from '../../graphql/mutations';
+import { myUser } from '../../utils/myUser';
 import { SnackbarContext } from '../SnackbarContext';
 
 interface CreateBoardModalProps {
@@ -20,18 +24,25 @@ interface CreateBoardModalProps {
   handleClose: () => void
 }
 
+interface CreateBoardResponse {
+  createBoard: BoardGQL
+}
+
 export const CreateBoardModal: FC<CreateBoardModalProps> = ({ open, handleClose }) => {
   const [newBoard, setNewBoard] = useState({} as Board);
   const { users, addBoards } = useContext(JusticeTaskManagerContext);
   const { addSnackbar } = useContext(SnackbarContext);
+  const { User } = myUser();
+
+  const [createBoardReq, { data, error }] = useMutation<CreateBoardResponse, CreateBoardMutationVariables>(createBoard);
 
   const handleOnchangeInputAddBoards = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
     setNewBoard((prevState) => ({
       ...prevState,
       [name]: value,
-      id: String(Date.now()),
-      rootUser: 'I',
+      rootUser: User?.id ?? '',
+      users: [],
       columns: [],
     }));
   };
@@ -53,16 +64,33 @@ export const CreateBoardModal: FC<CreateBoardModalProps> = ({ open, handleClose 
   };
 
   const handleCreateBoard = () => {
-    addBoards(newBoard);
-    handleClose();
-    addSnackbar({
-      open: true,
-      message: 'GOOD PUSH',
-      vertical: 'top',
-      horizontal: 'center',
-      type: 'notification',
+    createBoardReq({
+      variables: {
+        ...newBoard,
+      },
     });
+
+    handleClose();
   };
+
+  useEffect(() => {
+    if (error) {
+      addSnackbar({
+        open: true,
+        vertical: 'top',
+        horizontal: 'center',
+        message: error?.message,
+        type: 'error',
+      });
+    }
+  }, [error]);
+
+  useEffect(() => {
+    if (data) {
+    // @ts-ignore
+      addBoards(data?.createBoard);
+    }
+  }, [data]);
 
   return (
     <Dialog

@@ -1,13 +1,17 @@
 import React, {
-  ChangeEvent, FC, useContext, useState,
+  ChangeEvent, FC, useContext, useEffect, useState,
 } from 'react';
 import {
   Autocomplete, Dialog, DialogContent, DialogTitle, TextField,
 } from '@mui/material';
+import { useMutation } from '@apollo/client';
 import { Board, Column } from '../../types';
 import { JusticeTaskManagerContext } from '../JusticeTaskManagerContext';
 import { ModalFooter } from '../ModalFooter';
 import { ModalWrapper } from '../ModalWrapper';
+import { createColumn as createColumnGQL } from '../../graphql/mutations';
+import { CreateColumnMutationVariables } from '../../API';
+import { SnackbarContext } from '../SnackbarContext';
 
 interface CreateColumnModalProps {
   open: boolean
@@ -15,8 +19,11 @@ interface CreateColumnModalProps {
 }
 
 export const CreateColumnModal: FC<CreateColumnModalProps> = ({ open, handleClose }) => {
-  const { boards, addColumns } = useContext(JusticeTaskManagerContext);
+  const { boards } = useContext(JusticeTaskManagerContext);
+  const { addSnackbar } = useContext(SnackbarContext);
   const [newColumn, setNewColumn] = useState({} as Column);
+
+  const [createColumnReq, { error: createColumnError }] = useMutation<Board, CreateColumnMutationVariables>(createColumnGQL);
 
   const handleOnChangeInputAddColumn = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -48,10 +55,27 @@ export const CreateColumnModal: FC<CreateColumnModalProps> = ({ open, handleClos
   };
 
   const createColumn = () => {
-    addColumns(newColumn);
+    createColumnReq({
+      variables: {
+        ...newColumn,
+      },
+    });
+    // addColumns(newColumn);
     handleClose();
     setNewColumn({} as Column);
   };
+
+  useEffect(() => {
+    if (createColumnError) {
+      addSnackbar({
+        open: true,
+        vertical: 'top',
+        horizontal: 'center',
+        message: createColumnError?.message,
+        type: 'error',
+      });
+    }
+  }, [createColumnError]);
 
   return (
     <Dialog

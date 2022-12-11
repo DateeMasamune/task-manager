@@ -5,10 +5,13 @@ import {
   Autocomplete, Dialog, DialogContent, DialogTitle, TextField,
 } from '@mui/material';
 
+import { useMutation } from '@apollo/client';
 import { Board, Column, Task } from '../../types';
 import { JusticeTaskManagerContext } from '../JusticeTaskManagerContext';
 import { ModalFooter } from '../ModalFooter';
 import { ModalWrapper } from '../ModalWrapper';
+import { updateBoard } from '../../graphql/mutations';
+import { UpdateBoardMutationVariables } from '../../API';
 
 interface CreateTaskModalProps {
   open: boolean
@@ -19,6 +22,9 @@ export const CreateTaskModal: FC<CreateTaskModalProps> = ({ open, handleClose })
   const { boards, addTasks } = useContext(JusticeTaskManagerContext);
   const [newTask, setNewTask] = useState({} as Task);
   const [boardSelected, setBoardSelected] = useState<Board | null>(null);
+
+  const [updateBoardReq, { error }] = useMutation<Board, UpdateBoardMutationVariables>(updateBoard);
+  console.log('error', error);
 
   const handleOnChangeAddTask = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -56,7 +62,15 @@ export const CreateTaskModal: FC<CreateTaskModalProps> = ({ open, handleClose })
 
   const createTask = () => {
     if (boardSelected) {
-      addTasks(newTask, boardSelected?.id);
+      const task = addTasks(newTask, boardSelected?.id);
+      console.log('task', { ...task });
+
+      updateBoardReq({
+        variables: {
+          Board: { ...task },
+        },
+      });
+
       handleClose();
     }
   };

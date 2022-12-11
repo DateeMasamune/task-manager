@@ -7,6 +7,9 @@ import {
   MutationCreateBoardArgs, MutationCreateColumnArgs, MutationLoginArgs, MutationRegisterArgs, MutationUpdateBoardArgs,
 } from '../../resolvers-types';
 import { Models } from '../modeles/types';
+import { SubscriptionsConst } from '../subscriptions-const';
+
+const { BOARD_UPDATE } = SubscriptionsConst;
 
 export const Mutation = {
   register: async (parent: any, {
@@ -50,20 +53,27 @@ export const Mutation = {
 
     return { token: jwt.sign({ id: user._id }, config.jwt), User: user };
   },
-  updateBoard: async (parent: any, { Board }: MutationUpdateBoardArgs, { models }: Models) => {
+  updateBoard: async (parent: any, { Board }: MutationUpdateBoardArgs, { models, pubsub }: Models) => {
     try {
       await models.Board.replaceOne({ _id: Board.id }, Board);
 
-      return await models.Board.findById(Board.id);
+      const board = await models.Board.findById(Board.id);
+
+      await pubsub.publish(BOARD_UPDATE, {
+        socketBoardUpdate: board,
+      });
+
+      return board;
     } catch (error) {
       throw new Error('Error creating task');
     }
   },
-  createColumn: async (parent: any, { name, boardId }: MutationCreateColumnArgs, { models }: Models) => {
+  createColumn: async (parent: any, { name, boardId, tasks }: MutationCreateColumnArgs, { models, pubsub }: Models) => {
     const column = new models.Column({
       _id: new mongoose.Types.ObjectId(),
       name,
       boardId,
+      tasks,
     });
 
     try {
@@ -75,7 +85,13 @@ export const Mutation = {
         },
       });
 
-      return await models.Board.findById(boardId);
+      const board = await models.Board.findById(boardId);
+
+      await pubsub.publish(BOARD_UPDATE, {
+        socketBoardUpdate: board,
+      });
+
+      return board;
     } catch (error) {
       throw new Error('Error column task');
     }

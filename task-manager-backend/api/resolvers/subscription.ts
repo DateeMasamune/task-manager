@@ -1,7 +1,8 @@
 // import { withFilter } from 'graphql-subscriptions';
-// import { SubscriptionsConst } from '../subscriptions-const';
+import { Models } from '../modeles/types';
+import { SubscriptionsConst } from '../subscriptions-const';
 
-// const { BOARD_UPDATE } = SubscriptionsConst;
+const { BOARD_UPDATE } = SubscriptionsConst;
 
 export const Subscription = {
   // boardUpdate: {
@@ -13,4 +14,7 @@ export const Subscription = {
   //     ) => messageAdded.roomId === roomId,
   //   ),
   // },
+  socketBoardUpdate: {
+    subscribe: (_parent: any, _arg: any, { pubsub }: Models) => pubsub.asyncIterator(BOARD_UPDATE),
+  },
 };

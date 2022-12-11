@@ -23,7 +23,7 @@ export const JusticeTaskCardList: FC<JusticeTaskCardListProps> = ({ tasks, id })
         {...providedTask.innerRef}
         className={styles.wrapperJusticeTaskCardList}
       >
-        {tasks.map(({ id: itemId, content }, index) => (
+        {tasks?.map(({ id: itemId, content }, index) => (
           <Draggable
             key={itemId}
             draggableId={String(itemId)}

@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "get-schema": "get-graphql-schema http://localhost:5000/graphql > schema.graphql",
+    "get-schema": "get-graphql-schema http://localhost:5000/graphql > ../schema.graphql",
     "generate": "graphql-codegen"
   },
   "keywords": [

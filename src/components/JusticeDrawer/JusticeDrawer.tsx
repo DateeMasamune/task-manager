@@ -39,6 +39,11 @@ export const JusticeDrawer: FC<JusticeDrawerProps> = ({ children }) => {
     setMobileOpen(!mobileOpen);
   };
 
+  const exitTaskManager = () => {
+    localStorage.clear();
+    navigation('/registration');
+  };
+
   const handleActionClickButton = (link: string | null, id: number) => {
     if (link) navigation(link);
 
@@ -48,6 +53,8 @@ export const JusticeDrawer: FC<JusticeDrawerProps> = ({ children }) => {
       case 3: handleOpenAddColumn();
         break;
       case 4: handleOpenAddTask();
+        break;
+      case 5: exitTaskManager();
         break;
       default:
     }

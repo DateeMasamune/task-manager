@@ -61,10 +61,10 @@ export const JusticeBoard = () => {
               ...prevState,
               columns: updatePositionTaskColumns,
             }));
-            updateBoard({
-              ...currentBoard,
-              columns: updatePositionTaskColumns,
-            });
+            // updateBoard({
+            //   ...currentBoard,
+            //   columns: updatePositionTaskColumns,
+            // });
           }
         }
       }
@@ -89,10 +89,10 @@ export const JusticeBoard = () => {
           ...prevState,
           columns: updatePositionTaskColumns,
         }));
-        updateBoard({
-          ...currentBoard,
-          columns: updatePositionTaskColumns,
-        });
+        // updateBoard({
+        //   ...currentBoard,
+        //   columns: updatePositionTaskColumns,
+        // });
       }
     } else {
       const dragColumn = [...currentBoard.columns];
@@ -101,7 +101,7 @@ export const JusticeBoard = () => {
       dragColumn.splice(destination.index, 0, removedColumn);
 
       if (paramId) { // перетаскивание колонок
-        updateColumns(dragColumn, paramId);
+        // updateColumns(dragColumn, paramId);
         setCurrentBoard((prevState) => ({
           ...prevState,
           columns: dragColumn,

@@ -11,8 +11,11 @@ scalar JSON
         register(firstName: String!, lastName:String!, email: String!, password: String!): User
         login(email: String!, password: String!): Token
         updateBoard(Board: BoardInput!): Board
-        createColumn(name: String!, boardId: String!): Board
-        createBoard(name: String!, users: [String]!, rootUser: String!): Board
+        createColumn(name: String!, boardId: String!, tasks: [TaskInput]!): Board
+        createBoard(name: String!, users: [String]!, rootUser: String!, columns: [ColumnInput]!): Board
+    }
+    type Subscription {
+        socketBoardUpdate: Board
     }
     type User {
         id: ID!
@@ -30,18 +33,18 @@ scalar JSON
         name: String!
         users: [String]!
         rootUser: String!
-        columns: [Column]
-    }
-    type Task {
-        id: ID!
-        content: String!
-        columnId: String!
+        columns: [Column]!
     }
     type Column {
         id: ID!
         name: String!
         boardId: String!
-        tasks: [Task]
+        tasks: [Task]!
+    }
+    type Task {
+        id: ID!
+        content: String!
+        columnId: String!
     }
     input TaskInput {
         id: ID!
@@ -52,13 +55,13 @@ scalar JSON
         id: ID!
         name: String!
         boardId: String!
-        tasks: [TaskInput]
+        tasks: [TaskInput]!
     }
     input BoardInput {
         id: ID!
         name: String!
         users: [String]!
         rootUser: String!
-        columns: [ColumnInput]
+        columns: [ColumnInput]!
     }
 `;

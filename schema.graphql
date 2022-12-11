@@ -9,7 +9,7 @@ type Board {
   name: String!
   users: [String]!
   rootUser: String!
-  columns: [Column]
+  columns: [Column]!
 }
 
 input BoardInput {
@@ -17,21 +17,21 @@ input BoardInput {
   name: String!
   users: [String]!
   rootUser: String!
-  columns: [ColumnInput]
+  columns: [ColumnInput]!
 }
 
 type Column {
   id: ID!
   name: String!
   boardId: String!
-  tasks: [Task]
+  tasks: [Task]!
 }
 
 input ColumnInput {
   id: ID!
   name: String!
   boardId: String!
-  tasks: [TaskInput]
+  tasks: [TaskInput]!
 }
 
 scalar JSON
@@ -40,14 +40,18 @@ type Mutation {
   register(firstName: String!, lastName: String!, email: String!, password: String!): User
   login(email: String!, password: String!): Token
   updateBoard(Board: BoardInput!): Board
-  createColumn(name: String!, boardId: String!): Board
-  createBoard(name: String!, users: [String]!, rootUser: String!): Board
+  createColumn(name: String!, boardId: String!, tasks: [TaskInput]!): Board
+  createBoard(name: String!, users: [String]!, rootUser: String!, columns: [ColumnInput]!): Board
 }
 
 type Query {
-  getUsers: User
+  getUsers: [User]
   getBoard(id: String!): Board
-  getAllBoard: Board
+  getAllBoard: [Board]
+}
+
+type Subscription {
+  socketBoardUpdate: Board
 }
 
 type Task {

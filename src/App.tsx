@@ -12,6 +12,7 @@ import { JusticeTaskManagerContextProvider } from './components/JusticeTaskManag
 import { JusticeBoardRoutes } from './components/JusticeBoardRoutes';
 import { theme } from './theme';
 import './index.css';
+import { myUser } from './utils/myUser';
 
 const wsLink = new GraphQLWsLink(
   createClient({
@@ -36,8 +37,7 @@ const splitLink = split(
 );
 
 const authLink = setContext((_, { headers }) => {
-  // const { token } = useUser();
-  const { token } = { token: null };
+  const { token } = myUser();
   return {
     headers: {
       ...headers,
@@ -48,18 +48,18 @@ const authLink = setContext((_, { headers }) => {
 
 const client = new ApolloClient({
   link: authLink.concat(splitLink),
-  cache: new InMemoryCache(),
+  cache: new InMemoryCache({ addTypename: false }),
 });
 
 function App() {
   return (
     <ApolloProvider client={client}>
       <ThemeProvider theme={theme}>
-        <JusticeTaskManagerContextProvider>
-          <SnackbarContextProvider>
+        <SnackbarContextProvider>
+          <JusticeTaskManagerContextProvider>
             <JusticeBoardRoutes />
-          </SnackbarContextProvider>
-        </JusticeTaskManagerContextProvider>
+          </JusticeTaskManagerContextProvider>
+        </SnackbarContextProvider>
       </ThemeProvider>
     </ApolloProvider>
   );

@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { routes } from '../../constants';
 import { AllBoards } from '../AllBoards';
+import { Authorize } from '../Authorize';
 import { JusticeBoard } from '../JusticeBoard';
 import { JusticeDrawer } from '../JusticeDrawer';
 import { Login } from '../Login';
@@ -17,17 +18,21 @@ export const JusticeBoardRoutes = () => (
       <Route
         path={MAIN}
         element={(
-          <JusticeDrawer>
-            <AllBoards />
-          </JusticeDrawer>
+          <Authorize>
+            <JusticeDrawer>
+              <AllBoards />
+            </JusticeDrawer>
+          </Authorize>
         )}
       />
       <Route
         path={`${AllBOARDS}/:id`}
         element={(
-          <JusticeDrawer>
-            <JusticeBoard />
-          </JusticeDrawer>
+          <Authorize>
+            <JusticeDrawer>
+              <JusticeBoard />
+            </JusticeDrawer>
+          </Authorize>
         )}
       />
       <Route
@@ -40,6 +45,16 @@ export const JusticeBoardRoutes = () => (
         path={LOGIN}
         element={(
           <Login />
+        )}
+      />
+      <Route
+        path="*"
+        element={(
+          <Authorize>
+            <JusticeDrawer>
+              <JusticeBoard />
+            </JusticeDrawer>
+          </Authorize>
         )}
       />
     </Routes>
