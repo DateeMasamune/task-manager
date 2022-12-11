@@ -24,6 +24,14 @@ export type Board = {
   users: Array<Maybe<Scalars['String']>>;
 };
 
+export type BoardInput = {
+  columns?: InputMaybe<Array<InputMaybe<ColumnInput>>>;
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  rootUser: Scalars['String'];
+  users: Array<InputMaybe<Scalars['String']>>;
+};
+
 export type Column = {
   __typename?: 'Column';
   boardId: Scalars['String'];
@@ -32,13 +40,20 @@ export type Column = {
   tasks?: Maybe<Array<Maybe<Task>>>;
 };
 
+export type ColumnInput = {
+  boardId: Scalars['String'];
+  id: Scalars['ID'];
+  name: Scalars['String'];
+  tasks?: InputMaybe<Array<InputMaybe<TaskInput>>>;
+};
+
 export type Mutation = {
   __typename?: 'Mutation';
   createBoard?: Maybe<Board>;
-  createColumn?: Maybe<Column>;
-  createTask?: Maybe<Task>;
+  createColumn?: Maybe<Board>;
   login?: Maybe<Token>;
   register?: Maybe<User>;
+  updateBoard?: Maybe<Board>;
 };
 
 
@@ -55,12 +70,6 @@ export type MutationCreateColumnArgs = {
 };
 
 
-export type MutationCreateTaskArgs = {
-  columnId: Scalars['String'];
-  content: Scalars['String'];
-};
-
-
 export type MutationLoginArgs = {
   email: Scalars['String'];
   password: Scalars['String'];
@@ -74,8 +83,14 @@ export type MutationRegisterArgs = {
   password: Scalars['String'];
 };
 
+
+export type MutationUpdateBoardArgs = {
+  Board: BoardInput;
+};
+
 export type Query = {
   __typename?: 'Query';
+  getAllBoard?: Maybe<Board>;
   getBoard?: Maybe<Board>;
   getUsers?: Maybe<User>;
 };
@@ -87,6 +102,12 @@ export type QueryGetBoardArgs = {
 
 export type Task = {
   __typename?: 'Task';
+  columnId: Scalars['String'];
+  content: Scalars['String'];
+  id: Scalars['ID'];
+};
+
+export type TaskInput = {
   columnId: Scalars['String'];
   content: Scalars['String'];
   id: Scalars['ID'];
@@ -178,14 +199,17 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
   Board: ResolverTypeWrapper<Board>;
+  BoardInput: BoardInput;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
   Column: ResolverTypeWrapper<Column>;
+  ColumnInput: ColumnInput;
   ID: ResolverTypeWrapper<Scalars['ID']>;
   JSON: ResolverTypeWrapper<Scalars['JSON']>;
   Mutation: ResolverTypeWrapper<{}>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']>;
   Task: ResolverTypeWrapper<Task>;
+  TaskInput: TaskInput;
   Token: ResolverTypeWrapper<Token>;
   User: ResolverTypeWrapper<User>;
 }>;
@@ -193,14 +217,17 @@ export type ResolversTypes = ResolversObject<{
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
   Board: Board;
+  BoardInput: BoardInput;
   Boolean: Scalars['Boolean'];
   Column: Column;
+  ColumnInput: ColumnInput;
   ID: Scalars['ID'];
   JSON: Scalars['JSON'];
   Mutation: {};
   Query: {};
   String: Scalars['String'];
   Task: Task;
+  TaskInput: TaskInput;
   Token: Token;
   User: User;
 }>;
@@ -228,13 +255,14 @@ export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   createBoard?: Resolver<Maybe<ResolversTypes['Board']>, ParentType, ContextType, RequireFields<MutationCreateBoardArgs, 'name' | 'rootUser' | 'users'>>;
-  createColumn?: Resolver<Maybe<ResolversTypes['Column']>, ParentType, ContextType, RequireFields<MutationCreateColumnArgs, 'boardId' | 'name'>>;
-  createTask?: Resolver<Maybe<ResolversTypes['Task']>, ParentType, ContextType, RequireFields<MutationCreateTaskArgs, 'columnId' | 'content'>>;
+  createColumn?: Resolver<Maybe<ResolversTypes['Board']>, ParentType, ContextType, RequireFields<MutationCreateColumnArgs, 'boardId' | 'name'>>;
   login?: Resolver<Maybe<ResolversTypes['Token']>, ParentType, ContextType, RequireFields<MutationLoginArgs, 'email' | 'password'>>;
   register?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationRegisterArgs, 'email' | 'firstName' | 'lastName' | 'password'>>;
+  updateBoard?: Resolver<Maybe<ResolversTypes['Board']>, ParentType, ContextType, RequireFields<MutationUpdateBoardArgs, 'Board'>>;
 }>;
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+  getAllBoard?: Resolver<Maybe<ResolversTypes['Board']>, ParentType, ContextType>;
   getBoard?: Resolver<Maybe<ResolversTypes['Board']>, ParentType, ContextType, RequireFields<QueryGetBoardArgs, 'id'>>;
   getUsers?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
 }>;

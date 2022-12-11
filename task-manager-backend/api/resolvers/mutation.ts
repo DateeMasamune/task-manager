@@ -1,9 +1,10 @@
 import bcrypt from 'bcrypt';
 import { GraphQLError } from 'graphql';
 import jwt from 'jsonwebtoken';
+import mongoose from 'mongoose';
 import { config } from '../../config';
 import {
-  MutationCreateBoardArgs, MutationCreateColumnArgs, MutationCreateTaskArgs, MutationLoginArgs, MutationRegisterArgs,
+  MutationCreateBoardArgs, MutationCreateColumnArgs, MutationLoginArgs, MutationRegisterArgs, MutationUpdateBoardArgs,
 } from '../../resolvers-types';
 import { Models } from '../modeles/types';
 
@@ -49,37 +50,32 @@ export const Mutation = {
 
     return { token: jwt.sign({ id: user._id }, config.jwt), User: user };
   },
-  createTask: async (parent: any, { content, columnId }: MutationCreateTaskArgs, { models }: Models) => {
-    const task = new models.Task({
-      content,
-      columnId,
-    });
-
+  updateBoard: async (parent: any, { Board }: MutationUpdateBoardArgs, { models }: Models) => {
     try {
-      await task.save();
-      return task;
+      await models.Board.replaceOne({ _id: Board.id }, Board);
+
+      return await models.Board.findById(Board.id);
     } catch (error) {
       throw new Error('Error creating task');
     }
   },
   createColumn: async (parent: any, { name, boardId }: MutationCreateColumnArgs, { models }: Models) => {
     const column = new models.Column({
+      _id: new mongoose.Types.ObjectId(),
       name,
       boardId,
     });
 
     try {
-      const saveColumn = await column.save();
-
       await models.Board.updateOne({ _id: boardId }, {
         $push: {
           columns: {
-            ...saveColumn,
+            ...column,
           },
         },
       });
 
-      return column;
+      return await models.Board.findById(boardId);
     } catch (error) {
       throw new Error('Error column task');
     }

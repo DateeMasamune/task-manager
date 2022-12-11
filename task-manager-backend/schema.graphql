@@ -12,6 +12,14 @@ type Board {
   columns: [Column]
 }
 
+input BoardInput {
+  id: ID!
+  name: String!
+  users: [String]!
+  rootUser: String!
+  columns: [ColumnInput]
+}
+
 type Column {
   id: ID!
   name: String!
@@ -19,22 +27,36 @@ type Column {
   tasks: [Task]
 }
 
+input ColumnInput {
+  id: ID!
+  name: String!
+  boardId: String!
+  tasks: [TaskInput]
+}
+
 scalar JSON
 
 type Mutation {
   register(firstName: String!, lastName: String!, email: String!, password: String!): User
   login(email: String!, password: String!): Token
-  createTask(content: String!, columnId: String!): Task
-  createColumn(name: String!, boardId: String!): Column
+  updateBoard(Board: BoardInput!): Board
+  createColumn(name: String!, boardId: String!): Board
   createBoard(name: String!, users: [String]!, rootUser: String!): Board
 }
 
 type Query {
   getUsers: User
   getBoard(id: String!): Board
+  getAllBoard: Board
 }
 
 type Task {
+  id: ID!
+  content: String!
+  columnId: String!
+}
+
+input TaskInput {
   id: ID!
   content: String!
   columnId: String!
