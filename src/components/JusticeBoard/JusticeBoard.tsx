@@ -129,7 +129,9 @@ export const JusticeBoard = () => {
             {...provided.droppableProps}
             ref={provided.innerRef}
           >
-            <JusticeColumns columns={currentBoard?.columns} />
+            {currentBoard?.columns?.map((column, index) => (
+              <JusticeColumns key={column.id} column={column} index={index} />
+            ))}
             {provided.placeholder}
           </Box>
         )}

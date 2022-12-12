@@ -1,5 +1,5 @@
 import React, {
-  ChangeEvent, FC, useContext, useState,
+  ChangeEvent, FC, useContext, useEffect, useState,
 } from 'react';
 import {
   Autocomplete, Dialog, DialogContent, DialogTitle, TextField,
@@ -12,6 +12,7 @@ import { ModalFooter } from '../ModalFooter';
 import { ModalWrapper } from '../ModalWrapper';
 import { updateBoard } from '../../graphql/mutations';
 import { UpdateBoardMutationVariables } from '../../API';
+import { SnackbarContext } from '../SnackbarContext';
 
 interface CreateTaskModalProps {
   open: boolean
@@ -20,11 +21,11 @@ interface CreateTaskModalProps {
 
 export const CreateTaskModal: FC<CreateTaskModalProps> = ({ open, handleClose }) => {
   const { boards, addTasks } = useContext(JusticeTaskManagerContext);
+  const { addSnackbar } = useContext(SnackbarContext);
   const [newTask, setNewTask] = useState({} as Task);
   const [boardSelected, setBoardSelected] = useState<Board | null>(null);
 
-  const [updateBoardReq, { error }] = useMutation<Board, UpdateBoardMutationVariables>(updateBoard);
-  console.log('error', error);
+  const [updateBoardReq, { error: updateBoardError }] = useMutation<Board, UpdateBoardMutationVariables>(updateBoard);
 
   const handleOnChangeAddTask = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -62,18 +63,31 @@ export const CreateTaskModal: FC<CreateTaskModalProps> = ({ open, handleClose })
 
   const createTask = () => {
     if (boardSelected) {
-      const task = addTasks(newTask, boardSelected?.id);
-      console.log('task', { ...task });
+      const board = addTasks(newTask, boardSelected?.id);
 
-      updateBoardReq({
-        variables: {
-          Board: { ...task },
-        },
-      });
+      if (board) {
+        updateBoardReq({
+          variables: {
+            Board: board,
+          },
+        });
 
-      handleClose();
+        handleClose();
+      }
     }
   };
+
+  useEffect(() => {
+    if (updateBoardError) {
+      addSnackbar({
+        open: true,
+        vertical: 'top',
+        horizontal: 'center',
+        message: updateBoardError?.message,
+        type: 'error',
+      });
+    }
+  }, [updateBoardError]);
 
   return (
     <Dialog

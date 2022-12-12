@@ -19,13 +19,17 @@ interface JusticeTaskManagerContextProps {
   // eslint-disable-next-line no-unused-vars
   addColumns: (column: Column) => void
   // eslint-disable-next-line no-unused-vars
-  addTasks: (task: Task, idBoard: string) => Board
+  addTasks: (task: Task, idBoard: string) => Board | undefined
   // eslint-disable-next-line no-unused-vars
   addUsers: (user: User) => void
   // eslint-disable-next-line no-unused-vars
   updateColumns: (modifiedColumns: Column[], idBoard: string) => void
   // eslint-disable-next-line no-unused-vars
   updateBoard: (board: Board) => void
+  // eslint-disable-next-line no-unused-vars
+  renameColumn: (column: Column) => Board
+  // eslint-disable-next-line no-unused-vars
+  renameTask: (task: Task, idBoard: string) => Board
 }
 
 interface JusticeTaskManagerContextProviderProps {
@@ -60,7 +64,7 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
       if (origBoard.id === board.id) {
         return board;
       }
-      return board;
+      return origBoard;
     });
 
     setBoards(modifiedBoards);
@@ -101,6 +105,47 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
     setUsers((prevState) => ([...prevState, user]));
   };
 
+  const renameColumn = (updateNameColumn: Column) => {
+    const board: Board = boards.find(({ id }) => id === updateNameColumn.boardId) ?? {} as Board;
+
+    const updateColumnInBoard = board?.columns?.map((column) => {
+      if (column.id === updateNameColumn.id) {
+        return updateNameColumn;
+      }
+      return column;
+    });
+
+    return {
+      ...board,
+      columns: updateColumnInBoard,
+    };
+  };
+
+  const renameTask = (updateNameTask: Task, boardId: string) => {
+    const board: Board = boards.find(({ id }) => id === boardId) ?? {} as Board;
+    const column: Column = board.columns.find(({ id }) => id === updateNameTask.columnId) ?? {} as Column;
+    console.log('column', column);
+    
+    const updateTasks = column.tasks.map((task) => {
+      if (task.id === updateNameTask.id) {
+        return updateNameTask;
+      }
+      return task;
+    });
+
+    const columns = {
+      ...column,
+      tasks: updateTasks,
+    };
+
+    const test = {
+      ...board,
+      columns,
+    };
+
+    console.log('test', test);
+  };
+
   useEffect(() => {
     if (dataWsBoardUpdate) {
       console.log('dataWsBoardUpdate', dataWsBoardUpdate);
@@ -138,6 +183,8 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
     addUsers,
     updateColumns,
     updateBoard,
+    renameColumn,
+    renameTask,
   }), [boards, users]);
 
   return (
