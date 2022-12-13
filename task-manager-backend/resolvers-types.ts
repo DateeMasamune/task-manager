@@ -55,6 +55,7 @@ export type Mutation = {
   createColumn?: Maybe<Board>;
   login?: Maybe<Token>;
   register?: Maybe<User>;
+  removeBoard?: Maybe<Scalars['ID']>;
   updateBoard?: Maybe<Board>;
 };
 
@@ -85,6 +86,11 @@ export type MutationRegisterArgs = {
   firstName: Scalars['String'];
   lastName: Scalars['String'];
   password: Scalars['String'];
+};
+
+
+export type MutationRemoveBoardArgs = {
+  id: Scalars['ID'];
 };
 
 
@@ -270,6 +276,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
   createColumn?: Resolver<Maybe<ResolversTypes['Board']>, ParentType, ContextType, RequireFields<MutationCreateColumnArgs, 'boardId' | 'name' | 'tasks'>>;
   login?: Resolver<Maybe<ResolversTypes['Token']>, ParentType, ContextType, RequireFields<MutationLoginArgs, 'email' | 'password'>>;
   register?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationRegisterArgs, 'email' | 'firstName' | 'lastName' | 'password'>>;
+  removeBoard?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationRemoveBoardArgs, 'id'>>;
   updateBoard?: Resolver<Maybe<ResolversTypes['Board']>, ParentType, ContextType, RequireFields<MutationUpdateBoardArgs, 'Board'>>;
 }>;
 

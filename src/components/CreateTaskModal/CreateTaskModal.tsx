@@ -46,10 +46,10 @@ export const CreateTaskModal: FC<CreateTaskModalProps> = ({ open, handleClose })
 
   const handleAutoCompleteAddTask = (column: Column | null) => {
     if (column) {
-      const { id } = column;
+      const { customId } = column;
       setNewTask((prevState) => ({
         ...prevState,
-        columnId: id,
+        columnId: customId,
       }));
     } else {
       // @ts-ignore

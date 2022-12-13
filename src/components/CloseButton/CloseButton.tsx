@@ -4,18 +4,12 @@ import { Box } from '@mui/material';
 import styles from './styles.module.scss';
 
 interface CloseButtonProps {
-  itemId: string
+  removeFunction: (event: any) => void
 }
 
-export const CloseButton: FC<CloseButtonProps> = ({ itemId }) => {
-  const handleDeleteTask = (id: string) => {
-    console.log('delete-id', id);
-  };
-
-  return (
-    <Box className={styles.close} onClick={() => handleDeleteTask(itemId)}>
-      <Box />
-      <Box />
-    </Box>
-  );
-};
+export const CloseButton: FC<CloseButtonProps> = ({ removeFunction }) => (
+  <Box className={styles.close} onClick={removeFunction}>
+    <Box />
+    <Box />
+  </Box>
+);

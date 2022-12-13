@@ -1,6 +1,7 @@
 // import { authControl } from '../../utils/authControl';
 
 import { QueryGetBoardArgs } from '../../resolvers-types';
+import { authControl } from '../../utils/authControl';
 import { Models } from '../modeles/types';
 
 export const Query = {
@@ -19,6 +20,7 @@ export const Query = {
     }
   },
   getAllBoard: async (parent: any, args: any, { models, user }: Models) => {
+    authControl(user);
     try {
       return await models.Board.find();
     } catch (error) {

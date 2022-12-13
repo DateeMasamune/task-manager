@@ -13,6 +13,7 @@ scalar JSON
         updateBoard(Board: BoardInput!): Board
         createColumn(name: String!, boardId: String!, tasks: [TaskInput]!): Board
         createBoard(name: String!, users: [String]!, rootUser: String!, columns: [ColumnInput]!): Board
+        removeBoard(id: ID!): ID
     }
     type Subscription {
         socketBoardUpdate: Board

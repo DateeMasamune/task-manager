@@ -30,6 +30,10 @@ interface JusticeTaskManagerContextProps {
   renameColumn: (column: Column) => Board
   // eslint-disable-next-line no-unused-vars
   renameTask: (task: Task, idBoard: string) => Board
+  // eslint-disable-next-line no-unused-vars
+  removeTask: (task: Task, idBoard: string) => Board
+  // eslint-disable-next-line no-unused-vars
+  removeColumn: (column: Column, idBoard: string) => Board
 }
 
 interface JusticeTaskManagerContextProviderProps {
@@ -83,15 +87,25 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
     updateBoard(replaceColumns);
   };
 
+  const removeColumn = (column: Column, boardId: string) => {
+    const board: Board = boards.find(({ id }) => id === boardId) ?? {} as Board;
+    const afterRemoveColumn = board.columns.filter(({ customId }) => customId !== column.customId);
+
+    return {
+      ...board,
+      columns: afterRemoveColumn,
+    };
+  };
+
   const addTasks = (task: Task, idBoard: string) => {
     const board = boards.find(({ id }) => id === idBoard);
     const copyBoard: Board = JSON.parse(JSON.stringify(board));
 
     if (copyBoard) {
-      const column = copyBoard?.columns.find(({ id }) => id === task.columnId);
+      const column = copyBoard?.columns.find(({ customId }) => customId === task.columnId);
       column?.tasks.push(task);
       copyBoard.columns = copyBoard.columns.map((origColumn) => {
-        if (origColumn.id === column?.id) {
+        if (origColumn.customId === column?.customId) {
           return column;
         }
         return origColumn;
@@ -122,9 +136,8 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
 
   const renameTask = (updateNameTask: Task, boardId: string) => {
     const board: Board = boards.find(({ id }) => id === boardId) ?? {} as Board;
-    const column: Column = board.columns.find(({ id }) => id === updateNameTask.columnId) ?? {} as Column;
-    console.log('column', column);
-    
+    const column: Column = board.columns.find(({ customId }) => customId === updateNameTask.columnId) ?? {} as Column;
+
     const updateTasks = column.tasks.map((task) => {
       if (task.id === updateNameTask.id) {
         return updateNameTask;
@@ -132,17 +145,42 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
       return task;
     });
 
-    const columns = {
-      ...column,
-      tasks: updateTasks,
-    };
+    const updateNewColumn = board.columns.map((origColumn) => {
+      if (origColumn.customId === column.customId) {
+        return {
+          ...column,
+          tasks: updateTasks,
+        };
+      }
+      return origColumn;
+    });
 
-    const test = {
+    return {
       ...board,
-      columns,
+      columns: updateNewColumn,
     };
+  };
 
-    console.log('test', test);
+  const removeTask = (task: Task, boardId: string) => {
+    const board: Board = boards.find(({ id }) => id === boardId) ?? {} as Board;
+    const column: Column = board.columns.find(({ customId }) => customId === task.columnId) ?? {} as Column;
+
+    const afterRemoveTask = column.tasks.filter(({ id }) => id !== task.id);
+
+    const updateNewColumn = board.columns.map((origColumn) => {
+      if (origColumn.customId === column.customId) {
+        return {
+          ...column,
+          tasks: afterRemoveTask,
+        };
+      }
+      return origColumn;
+    });
+
+    return {
+      ...board,
+      columns: updateNewColumn,
+    };
   };
 
   useEffect(() => {
@@ -184,6 +222,8 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
     updateBoard,
     renameColumn,
     renameTask,
+    removeTask,
+    removeColumn,
   }), [boards, users]);
 
   return (
