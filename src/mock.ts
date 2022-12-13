@@ -65,18 +65,21 @@ export const itemsThreeFromBackendMock: Task[] = [
 export const columsFromBackendMock: Column[] = [
   {
     id: '7',
+    customId: '7',
     boardId: '1',
     name: 'Todo',
     tasks: itemsFromBackendMock,
   },
   {
     id: '8',
+    customId: '7',
     boardId: '2',
     name: 'In progress',
     tasks: itemsTwoFromBackendMock,
   },
   {
     id: '9',
+    customId: '7',
     name: 'Ready',
     boardId: '3',
     tasks: itemsThreeFromBackendMock,

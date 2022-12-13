@@ -9,8 +9,8 @@ import { Board, Column } from '../../types';
 import { JusticeTaskManagerContext } from '../JusticeTaskManagerContext';
 import { ModalFooter } from '../ModalFooter';
 import { ModalWrapper } from '../ModalWrapper';
-import { createColumn as createColumnGQL } from '../../graphql/mutations';
-import { CreateColumnMutationVariables } from '../../API';
+import { updateBoard } from '../../graphql/mutations';
+import { UpdateBoardMutationVariables } from '../../API';
 import { SnackbarContext } from '../SnackbarContext';
 
 interface CreateColumnModalProps {
@@ -19,11 +19,11 @@ interface CreateColumnModalProps {
 }
 
 export const CreateColumnModal: FC<CreateColumnModalProps> = ({ open, handleClose }) => {
-  const { boards } = useContext(JusticeTaskManagerContext);
+  const { boards, addColumns } = useContext(JusticeTaskManagerContext);
   const { addSnackbar } = useContext(SnackbarContext);
   const [newColumn, setNewColumn] = useState({} as Column);
 
-  const [createColumnReq, { error: createColumnError }] = useMutation<Board, CreateColumnMutationVariables>(createColumnGQL);
+  const [updateBoardReq, { error: updateBoardError }] = useMutation<Board, UpdateBoardMutationVariables>(updateBoard);
 
   const handleOnChangeInputAddColumn = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -41,6 +41,7 @@ export const CreateColumnModal: FC<CreateColumnModalProps> = ({ open, handleClos
 
       setNewColumn((prevState) => ({
         ...prevState,
+        customId: String(Date.now()),
         boardId: id,
         tasks: [],
       }));
@@ -55,27 +56,28 @@ export const CreateColumnModal: FC<CreateColumnModalProps> = ({ open, handleClos
   };
 
   const createColumn = () => {
-    createColumnReq({
+    const [board] = addColumns(newColumn);
+    updateBoardReq({
       variables: {
-        ...newColumn,
+        Board: board,
       },
     });
-    // addColumns(newColumn);
+
     handleClose();
     setNewColumn({} as Column);
   };
 
   useEffect(() => {
-    if (createColumnError) {
+    if (updateBoardError) {
       addSnackbar({
         open: true,
         vertical: 'top',
         horizontal: 'center',
-        message: createColumnError?.message,
+        message: updateBoardError?.message,
         type: 'error',
       });
     }
-  }, [createColumnError]);
+  }, [updateBoardError]);
 
   return (
     <Dialog

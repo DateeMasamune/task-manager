@@ -27,6 +27,7 @@ export type BoardInput = {
 
 export type ColumnInput = {
   id: string,
+  customId: string,
   name: string,
   boardId: string,
   tasks: Array< TaskInput | null >,
@@ -50,6 +51,7 @@ export type Board = {
 export type Column = {
   __typename: "Column",
   id: string,
+  customId: string,
   name: string,
   boardId: string,
   tasks:  Array<Task | null >,
@@ -114,6 +116,7 @@ export type UpdateBoardMutation = {
     columns:  Array< {
       __typename: "Column",
       id: string,
+      customId: string,
       name: string,
       boardId: string,
       tasks:  Array< {
@@ -142,6 +145,7 @@ export type CreateColumnMutation = {
     columns:  Array< {
       __typename: "Column",
       id: string,
+      customId: string,
       name: string,
       boardId: string,
       tasks:  Array< {
@@ -171,6 +175,7 @@ export type CreateBoardMutation = {
     columns:  Array< {
       __typename: "Column",
       id: string,
+      customId: string,
       name: string,
       boardId: string,
       tasks:  Array< {
@@ -208,6 +213,7 @@ export type GetBoardQuery = {
     columns:  Array< {
       __typename: "Column",
       id: string,
+      customId: string,
       name: string,
       boardId: string,
       tasks:  Array< {
@@ -230,6 +236,7 @@ export type GetAllBoardQuery = {
     columns:  Array< {
       __typename: "Column",
       id: string,
+      customId: string,
       name: string,
       boardId: string,
       tasks:  Array< {
@@ -252,6 +259,7 @@ export type SocketBoardUpdateSubscription = {
     columns:  Array< {
       __typename: "Column",
       id: string,
+      customId: string,
       name: string,
       boardId: string,
       tasks:  Array< {

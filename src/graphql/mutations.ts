@@ -48,6 +48,7 @@ export const updateBoard = /* GraphQL */ gql`
       rootUser
       columns {
         id
+        customId
         name
         boardId
         tasks {
@@ -72,6 +73,7 @@ export const createColumn = /* GraphQL */ gql`
       rootUser
       columns {
         id
+        customId
         name
         boardId
         tasks {
@@ -102,6 +104,7 @@ export const createBoard = /* GraphQL */ gql`
       rootUser
       columns {
         id
+        customId
         name
         boardId
         tasks {

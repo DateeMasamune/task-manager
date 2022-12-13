@@ -35,6 +35,7 @@ export type BoardInput = {
 export type Column = {
   __typename?: 'Column';
   boardId: Scalars['String'];
+  customId: Scalars['String'];
   id: Scalars['ID'];
   name: Scalars['String'];
   tasks: Array<Maybe<Task>>;
@@ -42,6 +43,7 @@ export type Column = {
 
 export type ColumnInput = {
   boardId: Scalars['String'];
+  customId: Scalars['String'];
   id: Scalars['ID'];
   name: Scalars['String'];
   tasks: Array<InputMaybe<TaskInput>>;
@@ -252,6 +254,7 @@ export type BoardResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type ColumnResolvers<ContextType = any, ParentType extends ResolversParentTypes['Column'] = ResolversParentTypes['Column']> = ResolversObject<{
   boardId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  customId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   tasks?: Resolver<Array<Maybe<ResolversTypes['Task']>>, ParentType, ContextType>;

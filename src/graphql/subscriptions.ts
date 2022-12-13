@@ -13,6 +13,7 @@ export const socketBoardUpdate = /* GraphQL */ gql`
       rootUser
       columns {
         id
+        customId
         name
         boardId
         tasks {

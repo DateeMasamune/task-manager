@@ -24,6 +24,7 @@ export const getBoard = /* GraphQL */ gql`
       rootUser
       columns {
         id
+        customId
         name
         boardId
         tasks {
@@ -44,6 +45,7 @@ export const getAllBoard = /* GraphQL */ gql`
       rootUser
       columns {
         id
+        customId
         name
         boardId
         tasks {

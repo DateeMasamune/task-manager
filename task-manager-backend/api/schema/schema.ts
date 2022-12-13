@@ -37,6 +37,7 @@ scalar JSON
     }
     type Column {
         id: ID!
+        customId: String!
         name: String!
         boardId: String!
         tasks: [Task]!
@@ -53,6 +54,7 @@ scalar JSON
     }
     input ColumnInput {
         id: ID!
+        customId: String!
         name: String!
         boardId: String!
         tasks: [TaskInput]!

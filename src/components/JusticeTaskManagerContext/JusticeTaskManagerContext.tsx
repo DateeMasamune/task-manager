@@ -17,7 +17,7 @@ interface JusticeTaskManagerContextProps {
   // eslint-disable-next-line no-unused-vars
   addBoards: (board: Board) => void
   // eslint-disable-next-line no-unused-vars
-  addColumns: (column: Column) => void
+  addColumns: (column: Column) => Board[]
   // eslint-disable-next-line no-unused-vars
   addTasks: (task: Task, idBoard: string) => Board | undefined
   // eslint-disable-next-line no-unused-vars
@@ -71,10 +71,9 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
   };
 
   const addColumns = (column: Column) => {
-    const board = boards.filter(({ id }) => id === column.boardId);
+    const board: Board[] = boards.filter(({ id }) => id === column.boardId);
 
-    const [insertColumn] = board.map((insertBoard) => ({ ...insertBoard, columns: insertBoard.columns.length > 0 ? [...insertBoard.columns, column] : [column] }));
-    updateBoard(insertColumn);
+    return board.map((insertBoard) => ({ ...insertBoard, columns: insertBoard.columns.length > 0 ? [...insertBoard.columns, column] : [column] }));
   };
 
   const updateColumns = (modifiedColumns: Column[], idBoard: string) => {

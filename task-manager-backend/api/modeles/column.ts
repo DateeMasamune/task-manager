@@ -6,6 +6,10 @@ const ColumnSchema = new Schema({
     type: String,
     require: true,
   },
+  customId: {
+    type: String,
+    require: true,
+  },
   boardId: {
     type: String,
     require: true,

@@ -6,6 +6,7 @@ export interface Task {
 
 export interface Column {
   id: string
+  customId: string
   name: string
   boardId: string
   tasks: Task[]

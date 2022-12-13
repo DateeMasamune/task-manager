@@ -22,6 +22,7 @@ input BoardInput {
 
 type Column {
   id: ID!
+  customId: String!
   name: String!
   boardId: String!
   tasks: [Task]!
@@ -29,6 +30,7 @@ type Column {
 
 input ColumnInput {
   id: ID!
+  customId: String!
   name: String!
   boardId: String!
   tasks: [TaskInput]!
