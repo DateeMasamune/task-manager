@@ -188,6 +188,14 @@ export type CreateBoardMutation = {
   } | null,
 };
 
+export type RemoveBoardMutationVariables = {
+  id: string,
+};
+
+export type RemoveBoardMutation = {
+  removeBoard?: string | null,
+};
+
 export type GetUsersQuery = {
   getUsers?:  Array< {
     __typename: "User",

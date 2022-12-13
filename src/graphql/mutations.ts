@@ -116,3 +116,8 @@ export const createBoard = /* GraphQL */ gql`
     }
   }
 `;
+export const removeBoard = /* GraphQL */ gql`
+  mutation RemoveBoard($id: ID!) {
+    removeBoard(id: $id)
+  }
+`;
