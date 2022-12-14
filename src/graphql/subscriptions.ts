@@ -25,3 +25,29 @@ export const socketBoardUpdate = /* GraphQL */ gql`
     }
   }
 `;
+export const socketBoardRemove = /* GraphQL */ gql`
+  subscription SocketBoardRemove {
+    socketBoardRemove
+  }
+`;
+export const socketBoardCreate = /* GraphQL */ gql`
+  subscription SocketBoardCreate {
+    socketBoardCreate {
+      id
+      name
+      users
+      rootUser
+      columns {
+        id
+        customId
+        name
+        boardId
+        tasks {
+          id
+          content
+          columnId
+        }
+      }
+    }
+  }
+`;

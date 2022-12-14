@@ -279,3 +279,30 @@ export type SocketBoardUpdateSubscription = {
     } | null >,
   } | null,
 };
+
+export type SocketBoardRemoveSubscription = {
+  socketBoardRemove?: string | null,
+};
+
+export type SocketBoardCreateSubscription = {
+  socketBoardCreate?:  {
+    __typename: "Board",
+    id: string,
+    name: string,
+    users: Array< string | null >,
+    rootUser: string,
+    columns:  Array< {
+      __typename: "Column",
+      id: string,
+      customId: string,
+      name: string,
+      boardId: string,
+      tasks:  Array< {
+        __typename: "Task",
+        id: string,
+        content: string,
+        columnId: string,
+      } | null >,
+    } | null >,
+  } | null,
+};

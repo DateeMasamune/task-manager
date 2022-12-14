@@ -2,13 +2,12 @@ import { useQuery, useSubscription } from '@apollo/client';
 import React, {
   createContext, FC, ReactNode, useContext, useEffect, useMemo, useState,
 } from 'react';
-import { usersMock } from '../../mock';
 import {
   Board, Column, Task, User,
 } from '../../types';
-import { Board as BoardGQL, SocketBoardUpdateSubscription } from '../../API';
-import { socketBoardUpdate } from '../../graphql/subscriptions';
-import { getAllBoard } from '../../graphql/queries';
+import { Board as BoardGQL, SocketBoardRemoveSubscription, SocketBoardUpdateSubscription } from '../../API';
+import { socketBoardCreate, socketBoardRemove, socketBoardUpdate } from '../../graphql/subscriptions';
+import { getAllBoard, getUsers } from '../../graphql/queries';
 import { SnackbarContext } from '../SnackbarContext';
 
 interface JusticeTaskManagerContextProps {
@@ -44,20 +43,36 @@ interface SocketBoardUpdateProps {
   socketBoardUpdate: BoardGQL
 }
 
+interface SocketBoardRemoveProps {
+  socketBoardRemove: string
+}
+
+interface SocketBoardCreateProps {
+  socketBoardCreate: Board
+}
+
 interface GetAllBoardResponse {
   getAllBoard: BoardGQL[]
+}
+
+interface GetUsersResponse {
+  getUsers: User[]
 }
 
 export const JusticeTaskManagerContext = createContext<JusticeTaskManagerContextProps>({} as JusticeTaskManagerContextProps);
 
 export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProviderProps> = ({ children }) => {
   const [boards, setBoards] = useState<Board[]>([]);
-  const [users, setUsers] = useState<User[]>(usersMock);
+  const [users, setUsers] = useState<User[]>([]);
 
   const { addSnackbar } = useContext(SnackbarContext);
 
   const { data: dataWsBoardUpdate } = useSubscription<SocketBoardUpdateProps, SocketBoardUpdateSubscription>(socketBoardUpdate);
+  const { data: dataWsBoardRemove } = useSubscription<SocketBoardRemoveProps, SocketBoardRemoveSubscription>(socketBoardRemove);
+  const { data: dataWsBoardCreate } = useSubscription<SocketBoardCreateProps, SocketBoardRemoveSubscription>(socketBoardCreate);
+
   const { error: allBoardsError, data: allBoardsData } = useQuery<GetAllBoardResponse>(getAllBoard);
+  const { error: getUsersError, data: getUsersData } = useQuery<GetUsersResponse>(getUsers);
 
   const addBoards = (board: Board) => {
     setBoards((prevState) => ([...prevState, board]));
@@ -72,6 +87,12 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
     });
 
     setBoards(modifiedBoards);
+  };
+
+  const removeBoard = (id: string) => {
+    const remove = boards.filter(({ id: boardId }) => boardId !== id);
+
+    setBoards(remove);
   };
 
   const addColumns = (column: Column) => {
@@ -184,9 +205,19 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
   };
 
   useEffect(() => {
-    if (dataWsBoardUpdate) {
-      console.log('dataWsBoardUpdate', dataWsBoardUpdate);
+    if (dataWsBoardRemove) {
+      removeBoard(dataWsBoardRemove.socketBoardRemove);
+    }
+  }, [dataWsBoardRemove]);
 
+  useEffect(() => {
+    if (dataWsBoardCreate) {
+      addBoards(dataWsBoardCreate.socketBoardCreate);
+    }
+  }, [dataWsBoardCreate]);
+
+  useEffect(() => {
+    if (dataWsBoardUpdate) {
       // @ts-ignore
       updateBoard(dataWsBoardUpdate?.socketBoardUpdate);
     }
@@ -197,7 +228,10 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
       // @ts-ignore
       setBoards(allBoardsData?.getAllBoard);
     }
-  }, [allBoardsData]);
+    if (getUsersData) {
+      setUsers(getUsersData.getUsers);
+    }
+  }, [allBoardsData, getUsersData]);
 
   useEffect(() => {
     if (allBoardsError) {
@@ -206,6 +240,15 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
         vertical: 'top',
         horizontal: 'center',
         message: allBoardsError?.message,
+        type: 'error',
+      });
+    }
+    if (getUsersError) {
+      addSnackbar({
+        open: true,
+        vertical: 'top',
+        horizontal: 'center',
+        message: getUsersError?.message,
         type: 'error',
       });
     }

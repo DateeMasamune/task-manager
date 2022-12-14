@@ -112,6 +112,8 @@ export type QueryGetBoardArgs = {
 
 export type Subscription = {
   __typename?: 'Subscription';
+  socketBoardCreate?: Maybe<Board>;
+  socketBoardRemove?: Maybe<Scalars['ID']>;
   socketBoardUpdate?: Maybe<Board>;
 };
 
@@ -287,6 +289,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 }>;
 
 export type SubscriptionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = ResolversObject<{
+  socketBoardCreate?: SubscriptionResolver<Maybe<ResolversTypes['Board']>, "socketBoardCreate", ParentType, ContextType>;
+  socketBoardRemove?: SubscriptionResolver<Maybe<ResolversTypes['ID']>, "socketBoardRemove", ParentType, ContextType>;
   socketBoardUpdate?: SubscriptionResolver<Maybe<ResolversTypes['Board']>, "socketBoardUpdate", ParentType, ContextType>;
 }>;
 

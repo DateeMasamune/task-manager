@@ -17,6 +17,8 @@ scalar JSON
     }
     type Subscription {
         socketBoardUpdate: Board
+        socketBoardRemove: ID
+        socketBoardCreate: Board
     }
     type User {
         id: ID!
@@ -24,6 +26,9 @@ scalar JSON
         lastName: String!
         email: String!
         password: String!
+    }
+    type ID {
+        id: ID!
     }
     type Token {
         User: User!

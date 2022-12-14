@@ -4,19 +4,26 @@ import {
   DragDropContext, Droppable, DropResult,
 } from 'react-beautiful-dnd';
 import { useParams } from 'react-router-dom';
+import { useMutation } from '@apollo/client';
 import { JusticeColumns } from '../JusticeColumn';
 import { Board } from '../../types';
 import { JusticeTaskManagerContext } from '../JusticeTaskManagerContext';
 
 import styles from './styles.module.scss';
+import { updateBoard } from '../../graphql/mutations';
+import { UpdateBoardMutationVariables } from '../../API';
+import { SnackbarContext } from '../SnackbarContext';
 
 export const JusticeBoard = () => {
   const [currentBoard, setCurrentBoard] = useState<Board>({} as Board);
   const { id: paramId } = useParams();
 
+  const [updateBoardReq, { error: updateBoardError }] = useMutation<Board, UpdateBoardMutationVariables>(updateBoard);
+
   const {
-    boards, updateColumns, updateBoard,
+    boards,
   } = useContext(JusticeTaskManagerContext);
+  const { addSnackbar } = useContext(SnackbarContext);
 
   const handlerOnDragEnd = (result: DropResult) => {
     const { source, destination } = result;
@@ -65,6 +72,14 @@ export const JusticeBoard = () => {
             //   ...currentBoard,
             //   columns: updatePositionTaskColumns,
             // });
+            updateBoardReq({
+              variables: {
+                Board: {
+                  ...currentBoard,
+                  columns: updatePositionTaskColumns,
+                },
+              },
+            });
           }
         }
       }
@@ -89,6 +104,14 @@ export const JusticeBoard = () => {
           ...prevState,
           columns: updatePositionTaskColumns,
         }));
+        updateBoardReq({
+          variables: {
+            Board: {
+              ...currentBoard,
+              columns: updatePositionTaskColumns,
+            },
+          },
+        });
         // updateBoard({
         //   ...currentBoard,
         //   columns: updatePositionTaskColumns,
@@ -106,6 +129,14 @@ export const JusticeBoard = () => {
           ...prevState,
           columns: dragColumn,
         }));
+        updateBoardReq({
+          variables: {
+            Board: {
+              ...currentBoard,
+              columns: dragColumn,
+            },
+          },
+        });
       }
     }
   };
@@ -117,8 +148,16 @@ export const JusticeBoard = () => {
   }, [paramId, boards]);
 
   useEffect(() => {
-
-  }, [currentBoard]);
+    if (updateBoardError) {
+      addSnackbar({
+        open: true,
+        vertical: 'top',
+        horizontal: 'center',
+        message: updateBoardError?.message,
+        type: 'error',
+      });
+    }
+  }, [updateBoardError]);
 
   return (
     <DragDropContext onDragEnd={handlerOnDragEnd}>

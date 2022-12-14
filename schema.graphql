@@ -55,6 +55,8 @@ type Query {
 
 type Subscription {
   socketBoardUpdate: Board
+  socketBoardRemove: ID
+  socketBoardCreate: Board
 }
 
 type Task {

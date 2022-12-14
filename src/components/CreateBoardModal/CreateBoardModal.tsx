@@ -30,11 +30,11 @@ interface CreateBoardResponse {
 
 export const CreateBoardModal: FC<CreateBoardModalProps> = ({ open, handleClose }) => {
   const [newBoard, setNewBoard] = useState({} as Board);
-  const { users, addBoards } = useContext(JusticeTaskManagerContext);
+  const { users } = useContext(JusticeTaskManagerContext);
   const { addSnackbar } = useContext(SnackbarContext);
   const { User } = myUser();
 
-  const [createBoardReq, { data, error }] = useMutation<CreateBoardResponse, CreateBoardMutationVariables>(createBoard);
+  const [createBoardReq, { error }] = useMutation<CreateBoardResponse, CreateBoardMutationVariables>(createBoard);
 
   const handleOnchangeInputAddBoards = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -84,13 +84,6 @@ export const CreateBoardModal: FC<CreateBoardModalProps> = ({ open, handleClose 
       });
     }
   }, [error]);
-
-  useEffect(() => {
-    if (data) {
-    // @ts-ignore
-      addBoards(data?.createBoard);
-    }
-  }, [data]);
 
   return (
     <Dialog
