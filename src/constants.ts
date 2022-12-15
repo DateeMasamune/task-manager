@@ -30,6 +30,11 @@ export const menuList = [
   },
   {
     id: 5,
+    description: 'Пригласить пользователя к доске',
+    link: null,
+  },
+  {
+    id: 6,
     description: 'Уйти',
     link: null,
   },

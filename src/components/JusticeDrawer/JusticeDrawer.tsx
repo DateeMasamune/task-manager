@@ -19,6 +19,7 @@ import { useModalControll } from '../../hooks/useModalControll';
 import { CreateBoardModal } from '../CreateBoardModal';
 import { CreateColumnModal } from '../CreateColumnModal';
 import { CreateTaskModal } from '../CreateTaskModal';
+import { AddUserModal } from '../AddUserModal';
 
 interface JusticeDrawerProps {
   children: ReactNode
@@ -32,6 +33,7 @@ export const JusticeDrawer: FC<JusticeDrawerProps> = ({ children }) => {
   const { open: openAddBoard, handleOpen: handleOpenAddBoard, handleClose: handleCloseAddBoard } = useModalControll();
   const { open: openAddColumn, handleOpen: handleOpenAddColumn, handleClose: handleCloseAddColumn } = useModalControll();
   const { open: openAddTask, handleOpen: handleOpenAddTask, handleClose: handleCloseAddTask } = useModalControll();
+  const { open: openAddUsersForBoard, handleOpen: handleOpenAddUsersForBoard, handleClose: handleCloseAddUsersForBoard } = useModalControll();
 
   const navigation = useNavigate();
 
@@ -54,7 +56,9 @@ export const JusticeDrawer: FC<JusticeDrawerProps> = ({ children }) => {
         break;
       case 4: handleOpenAddTask();
         break;
-      case 5: exitTaskManager();
+      case 5: handleOpenAddUsersForBoard();
+        break;
+      case 6: exitTaskManager();
         break;
       default:
     }
@@ -140,6 +144,7 @@ export const JusticeDrawer: FC<JusticeDrawerProps> = ({ children }) => {
         <CreateBoardModal open={openAddBoard} handleClose={handleCloseAddBoard} />
         <CreateColumnModal open={openAddColumn} handleClose={handleCloseAddColumn} />
         <CreateTaskModal open={openAddTask} handleClose={handleCloseAddTask} />
+        <AddUserModal open={openAddUsersForBoard} handleClose={handleCloseAddUsersForBoard} />
       </Box>
     </Box>
   );

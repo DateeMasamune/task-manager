@@ -30,8 +30,8 @@ export const JusticeBoard = () => {
 
     if (!destination) return;
 
-    const sourceColumn = currentBoard.columns.find(({ id }) => String(id) === source.droppableId);
-    const destColumn = currentBoard.columns.find(({ id }) => String(id) === destination.droppableId);
+    const sourceColumn = currentBoard.columns.filter((col) => col).find(({ id }) => String(id) === source.droppableId);
+    const destColumn = currentBoard.columns.filter((col) => col).find(({ id }) => String(id) === destination.droppableId);
 
     if (source.droppableId !== destination.droppableId) { // перетаскивание между колонками
       if (sourceColumn && destColumn) {
@@ -41,11 +41,11 @@ export const JusticeBoard = () => {
         const [removedTaskFromColumn] = swapSourceItems.splice(source.index, 1);
         swapDestinationItems.splice(destination.index, 0, removedTaskFromColumn);
 
-        const columnDestination = currentBoard.columns.find(({ id }) => String(id) === destination.droppableId);
-        const columnSource = currentBoard.columns.find(({ id }) => String(id) === source.droppableId);
+        const columnDestination = currentBoard.columns.filter((col) => col).find(({ id }) => String(id) === destination.droppableId);
+        const columnSource = currentBoard.columns.filter((col) => col).find(({ id }) => String(id) === source.droppableId);
 
         if (columnDestination && columnSource) {
-          const updatePositionTaskColumns = currentBoard.columns.map((item) => {
+          const updatePositionTaskColumns = currentBoard.columns.filter((col) => col).map((item) => {
             if (item.id === columnDestination.id) {
               return {
                 ...columnDestination,
@@ -88,7 +88,7 @@ export const JusticeBoard = () => {
       const [removed] = swapPlaces.splice(source.index, 1);
       swapPlaces.splice(destination.index, 0, removed);
 
-      const updatePositionTaskColumns = currentBoard.columns.map((item) => {
+      const updatePositionTaskColumns = currentBoard.columns.filter((col) => col).map((item) => {
         if (item.id === sourceColumn.id) {
           return {
             ...sourceColumn,
@@ -112,10 +112,6 @@ export const JusticeBoard = () => {
             },
           },
         });
-        // updateBoard({
-        //   ...currentBoard,
-        //   columns: updatePositionTaskColumns,
-        // });
       }
     } else {
       const dragColumn = [...currentBoard.columns];
@@ -124,7 +120,6 @@ export const JusticeBoard = () => {
       dragColumn.splice(destination.index, 0, removedColumn);
 
       if (paramId) { // перетаскивание колонок
-        // updateColumns(dragColumn, paramId);
         setCurrentBoard((prevState) => ({
           ...prevState,
           columns: dragColumn,
@@ -168,8 +163,8 @@ export const JusticeBoard = () => {
             {...provided.droppableProps}
             ref={provided.innerRef}
           >
-            {currentBoard?.columns?.map((column, index) => (
-              <JusticeColumns key={column.id} column={column} index={index} />
+            {currentBoard?.columns?.filter((column) => column).map((column, index) => (
+              <JusticeColumns key={column?.id} column={column} index={index} />
             ))}
             {provided.placeholder}
           </Box>

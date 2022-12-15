@@ -1,14 +1,14 @@
-import { useQuery, useSubscription } from '@apollo/client';
+import { useQuery } from '@apollo/client';
 import React, {
   createContext, FC, ReactNode, useContext, useEffect, useMemo, useState,
 } from 'react';
 import {
   Board, Column, Task, User,
 } from '../../types';
-import { Board as BoardGQL, SocketBoardRemoveSubscription, SocketBoardUpdateSubscription } from '../../API';
-import { socketBoardCreate, socketBoardRemove, socketBoardUpdate } from '../../graphql/subscriptions';
+import { Board as BoardGQL } from '../../API';
 import { getAllBoard, getUsers } from '../../graphql/queries';
 import { SnackbarContext } from '../SnackbarContext';
+import { useSubscriptionWS } from '../../hooks/useSubscriptionWS';
 
 interface JusticeTaskManagerContextProps {
   boards: Board[]
@@ -39,18 +39,6 @@ interface JusticeTaskManagerContextProviderProps {
   children: ReactNode
 }
 
-interface SocketBoardUpdateProps {
-  socketBoardUpdate: BoardGQL
-}
-
-interface SocketBoardRemoveProps {
-  socketBoardRemove: string
-}
-
-interface SocketBoardCreateProps {
-  socketBoardCreate: Board
-}
-
 interface GetAllBoardResponse {
   getAllBoard: BoardGQL[]
 }
@@ -67,18 +55,21 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
 
   const { addSnackbar } = useContext(SnackbarContext);
 
-  const { data: dataWsBoardUpdate } = useSubscription<SocketBoardUpdateProps, SocketBoardUpdateSubscription>(socketBoardUpdate);
-  const { data: dataWsBoardRemove } = useSubscription<SocketBoardRemoveProps, SocketBoardRemoveSubscription>(socketBoardRemove);
-  const { data: dataWsBoardCreate } = useSubscription<SocketBoardCreateProps, SocketBoardRemoveSubscription>(socketBoardCreate);
+  useSubscriptionWS({
+    removeBoard,
+    addBoards,
+    updateBoard,
+    addSnackbar,
+  });
 
   const { error: allBoardsError, data: allBoardsData } = useQuery<GetAllBoardResponse>(getAllBoard);
   const { error: getUsersError, data: getUsersData } = useQuery<GetUsersResponse>(getUsers);
 
-  const addBoards = (board: Board) => {
+  function addBoards(board: Board) {
     setBoards((prevState) => ([...prevState, board]));
-  };
+  }
 
-  const updateBoard = (board: Board) => {
+  function updateBoard(board: Board) {
     const modifiedBoards = boards.map((origBoard) => {
       if (origBoard.id === board.id) {
         return board;
@@ -87,13 +78,13 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
     });
 
     setBoards(modifiedBoards);
-  };
+  }
 
-  const removeBoard = (id: string) => {
+  function removeBoard(id: string) {
     const remove = boards.filter(({ id: boardId }) => boardId !== id);
 
     setBoards(remove);
-  };
+  }
 
   const addColumns = (column: Column) => {
     const board: Board[] = boards.filter(({ id }) => id === column.boardId);
@@ -110,7 +101,7 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
 
   const removeColumn = (column: Column, boardId: string) => {
     const board: Board = boards.find(({ id }) => id === boardId) ?? {} as Board;
-    const afterRemoveColumn = board.columns.filter(({ customId }) => customId !== column.customId);
+    const afterRemoveColumn = board.columns.filter((col) => col).filter(({ customId }) => customId !== column.customId);
 
     return {
       ...board,
@@ -123,7 +114,7 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
     const copyBoard: Board = JSON.parse(JSON.stringify(board));
 
     if (copyBoard) {
-      const column = copyBoard?.columns.find(({ customId }) => customId === task.columnId);
+      const column = copyBoard?.columns.filter((col) => col).find(({ customId }) => customId === task.columnId);
       column?.tasks.push(task);
       copyBoard.columns = copyBoard.columns.map((origColumn) => {
         if (origColumn.customId === column?.customId) {
@@ -142,7 +133,7 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
   const renameColumn = (updateNameColumn: Column) => {
     const board: Board = boards.find(({ id }) => id === updateNameColumn.boardId) ?? {} as Board;
 
-    const updateColumnInBoard = board?.columns?.map((column) => {
+    const updateColumnInBoard = board?.columns?.filter((col) => col).map((column) => {
       if (column.id === updateNameColumn.id) {
         return updateNameColumn;
       }
@@ -157,24 +148,14 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
 
   const renameTask = (updateNameTask: Task, boardId: string) => {
     const board: Board = boards.find(({ id }) => id === boardId) ?? {} as Board;
-    const column: Column = board.columns.find(({ customId }) => customId === updateNameTask.columnId) ?? {} as Column;
 
-    const updateTasks = column.tasks.map((task) => {
-      if (task.id === updateNameTask.id) {
-        return updateNameTask;
-      }
-      return task;
-    });
-
-    const updateNewColumn = board.columns.map((origColumn) => {
-      if (origColumn.customId === column.customId) {
-        return {
-          ...column,
-          tasks: updateTasks,
-        };
-      }
-      return origColumn;
-    });
+    const updateNewColumn: Column[] = board.columns.filter((col) => col).map((thisColumn) => ({
+      ...thisColumn,
+      tasks: thisColumn.tasks.map((task) => {
+        if (task.id === updateNameTask.id) return updateNameTask;
+        return task;
+      }),
+    }));
 
     return {
       ...board,
@@ -184,44 +165,17 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
 
   const removeTask = (task: Task, boardId: string) => {
     const board: Board = boards.find(({ id }) => id === boardId) ?? {} as Board;
-    const column: Column = board.columns.find(({ customId }) => customId === task.columnId) ?? {} as Column;
 
-    const afterRemoveTask = column.tasks.filter(({ id }) => id !== task.id);
-
-    const updateNewColumn = board.columns.map((origColumn) => {
-      if (origColumn.customId === column.customId) {
-        return {
-          ...column,
-          tasks: afterRemoveTask,
-        };
-      }
-      return origColumn;
-    });
+    const updateNewColumn: Column[] = board.columns.filter((col) => col).map((thisColumn) => ({
+      ...thisColumn,
+      tasks: thisColumn.tasks.filter(({ id }) => id !== task.id),
+    }));
 
     return {
       ...board,
       columns: updateNewColumn,
     };
   };
-
-  useEffect(() => {
-    if (dataWsBoardRemove) {
-      removeBoard(dataWsBoardRemove.socketBoardRemove);
-    }
-  }, [dataWsBoardRemove]);
-
-  useEffect(() => {
-    if (dataWsBoardCreate) {
-      addBoards(dataWsBoardCreate.socketBoardCreate);
-    }
-  }, [dataWsBoardCreate]);
-
-  useEffect(() => {
-    if (dataWsBoardUpdate) {
-      // @ts-ignore
-      updateBoard(dataWsBoardUpdate?.socketBoardUpdate);
-    }
-  }, [dataWsBoardUpdate]);
 
   useEffect(() => {
     if (allBoardsData?.getAllBoard) {
