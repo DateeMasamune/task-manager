@@ -5,6 +5,7 @@ import {
   Autocomplete, Dialog, DialogContent, DialogTitle, TextField,
 } from '@mui/material';
 import { useMutation } from '@apollo/client';
+
 import { Board, Column } from '../../types';
 import { JusticeTaskManagerContext } from '../JusticeTaskManagerContext';
 import { ModalFooter } from '../ModalFooter';
@@ -19,9 +20,10 @@ interface CreateColumnModalProps {
 }
 
 export const CreateColumnModal: FC<CreateColumnModalProps> = ({ open, handleClose }) => {
+  const [newColumn, setNewColumn] = useState({} as Column);
+
   const { boards, addColumns } = useContext(JusticeTaskManagerContext);
   const { addSnackbar } = useContext(SnackbarContext);
-  const [newColumn, setNewColumn] = useState({} as Column);
 
   const [updateBoardReq, { error: updateBoardError }] = useMutation<Board, UpdateBoardMutationVariables>(updateBoard);
 

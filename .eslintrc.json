@@ -28,6 +28,7 @@
         "react/jsx-props-no-spreading": "off",
         "max-len": "off",
         "no-unsafe-optional-chaining": "off",
-        "no-use-before-define": "off"
+        "no-use-before-define": "off",
+        "no-unused-vars": "off"
     }
 }

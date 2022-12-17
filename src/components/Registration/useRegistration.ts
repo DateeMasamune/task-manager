@@ -1,7 +1,8 @@
-import { useMutation } from '@apollo/client';
 import { useContext, useEffect, useState } from 'react';
+import { useMutation } from '@apollo/client';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { useNavigate } from 'react-router-dom';
+
 import { RegisterMutationVariables, User } from '../../API';
 import { checkAllValues } from '../../utils/checkAllValues';
 import { RegistrationFormProps } from './Registration';
@@ -10,8 +11,10 @@ import { SnackbarContext } from '../SnackbarContext';
 
 export const useRegistration = () => {
   const [isDisabled, setDisabled] = useState(true);
-  const [registrationReq, { data, error }] = useMutation<User, RegisterMutationVariables>(registerGQL);
+
   const { addSnackbar } = useContext(SnackbarContext);
+
+  const [registrationReq, { data, error }] = useMutation<User, RegisterMutationVariables>(registerGQL);
 
   const navigate = useNavigate();
 

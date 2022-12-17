@@ -15,6 +15,7 @@ export const AuthFooter: FC<AuthFooterProps> = ({
 }) => {
   const [variantOne, variantTwo] = variants;
   const [nameOne, nameTwo] = buttonNames;
+
   return (
     <Box className={styles.wrapperAuthFooter}>
       <Button disabled={disabled} type="submit" variant={variantOne}>{nameOne}</Button>

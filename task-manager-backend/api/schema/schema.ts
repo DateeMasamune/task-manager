@@ -4,21 +4,21 @@ export const typeDefs = gql`
 scalar JSON
     type Query {
         getUsers: [User]
-        getBoard(id: String!): Board
         getAllBoard: [Board]
     }
     type Mutation {
         register(firstName: String!, lastName:String!, email: String!, password: String!): User
         login(email: String!, password: String!): Token
         updateBoard(Board: BoardInput!): Board
-        createColumn(name: String!, boardId: String!, tasks: [TaskInput]!): Board
         createBoard(name: String!, users: [String]!, rootUser: String!, columns: [ColumnInput]!): Board
         removeBoard(id: ID!): ID
+        addUserForBoard(id: ID!, users: [String]!): Board
     }
     type Subscription {
         socketBoardUpdate: Board
         socketBoardRemove: ID
         socketBoardCreate: Board
+        socketAddUserForBoard(rootUser: ID!): Board
     }
     type User {
         id: ID!

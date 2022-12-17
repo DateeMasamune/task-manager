@@ -15,27 +15,6 @@ export const getUsers = /* GraphQL */ gql`
     }
   }
 `;
-export const getBoard = /* GraphQL */ gql`
-  query GetBoard($id: String!) {
-    getBoard(id: $id) {
-      id
-      name
-      users
-      rootUser
-      columns {
-        id
-        customId
-        name
-        boardId
-        tasks {
-          id
-          content
-          columnId
-        }
-      }
-    }
-  }
-`;
 export const getAllBoard = /* GraphQL */ gql`
   query GetAllBoard {
     getAllBoard {

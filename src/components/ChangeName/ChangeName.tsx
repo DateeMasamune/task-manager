@@ -3,7 +3,6 @@ import { Box, Button, TextField } from '@mui/material';
 
 interface ChangeNameProps {
   prevName: string
-  // eslint-disable-next-line no-unused-vars
   sendChanges: (name: string) => void
   hideChangeName: () => void
   className?: string

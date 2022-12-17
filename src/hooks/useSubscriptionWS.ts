@@ -1,45 +1,67 @@
+import { useEffect } from 'react';
 import { useSubscription } from '@apollo/client';
-import { FC, useEffect } from 'react';
+
 import {
-  Board, SocketBoardCreateSubscription, SocketBoardRemoveSubscription, SocketBoardUpdateSubscription,
+  SocketAddUserForBoardSubscriptionVariables, SocketBoardCreateSubscription, SocketBoardRemoveSubscription, SocketBoardUpdateSubscription,
 } from '../API';
 import { MySnackbarOrigin } from '../components/SnackbarContext';
-import { socketBoardCreate, socketBoardRemove, socketBoardUpdate } from '../graphql/subscriptions';
-import { Task } from '../types';
+import {
+  socketAddUserForBoard, socketBoardCreate, socketBoardRemove, socketBoardUpdate,
+} from '../graphql/subscriptions';
+import { Board } from '../types';
 import { myUser } from '../utils/myUser';
 
-interface SocketBoardUpdateProps {
-  socketBoardUpdate: Board
+interface SocketBoardResponse {
+  [key: string]: Board
 }
 
 interface SocketBoardRemoveProps {
   socketBoardRemove: string
 }
 
-interface SocketBoardCreateProps {
-  socketBoardCreate: Board
-}
-
 interface UseSubscriptionProps {
-  // eslint-disable-next-line no-unused-vars
   addBoards: (board: Board) => void
-  // eslint-disable-next-line no-unused-vars
-  addTasks: (task: Task, idBoard: string) => Board | undefined
-  // eslint-disable-next-line no-unused-vars
   updateBoard: (board: Board) => void
-  // eslint-disable-next-line no-unused-vars
   removeBoard: (id: string) => void
-  // eslint-disable-next-line no-unused-vars
   addSnackbar: (notification: MySnackbarOrigin) => void
+  boards: Board[]
 }
 
-export const useSubscriptionWS: FC<UseSubscriptionProps> = ({
-  removeBoard, addBoards, updateBoard, addSnackbar,
-}) => {
+export const useSubscriptionWS = ({
+  removeBoard, addBoards, updateBoard, addSnackbar, boards,
+}: UseSubscriptionProps) => {
   const { User } = myUser();
-  const { data: dataWsBoardUpdate } = useSubscription<SocketBoardUpdateProps, SocketBoardUpdateSubscription>(socketBoardUpdate);
+  const { data: dataWsBoardUpdate } = useSubscription<SocketBoardResponse, SocketBoardUpdateSubscription>(socketBoardUpdate);
   const { data: dataWsBoardRemove } = useSubscription<SocketBoardRemoveProps, SocketBoardRemoveSubscription>(socketBoardRemove);
-  const { data: dataWsBoardCreate } = useSubscription<SocketBoardCreateProps, SocketBoardCreateSubscription>(socketBoardCreate);
+  const { data: dataWsBoardCreate } = useSubscription<SocketBoardResponse, SocketBoardCreateSubscription>(socketBoardCreate);
+  const { data: dataWsAddUserForBoard } = useSubscription<SocketBoardResponse, SocketAddUserForBoardSubscriptionVariables>(socketAddUserForBoard, {
+    variables: {
+      rootUser: User?.id ?? '',
+    },
+  });
+
+  useEffect(() => {
+    if (dataWsAddUserForBoard) {
+      const { name, rootUser, id } = dataWsAddUserForBoard.socketAddUserForBoard;
+
+      const [board] = boards.filter(({ id: boardId }) => boardId === id);
+
+      const checkMyInBoard = board.users.includes(User?.id ?? '');
+
+      if (rootUser !== User?.id) {
+        updateBoard(dataWsAddUserForBoard.socketAddUserForBoard);
+        if (!checkMyInBoard) {
+          addSnackbar({
+            open: true,
+            vertical: 'top',
+            horizontal: 'center',
+            message: `Вас пригласили к доске ${name}`,
+            type: 'notification',
+          });
+        }
+      }
+    }
+  }, [dataWsAddUserForBoard]);
 
   useEffect(() => {
     if (dataWsBoardRemove) {
@@ -55,7 +77,6 @@ export const useSubscriptionWS: FC<UseSubscriptionProps> = ({
 
   useEffect(() => {
     if (dataWsBoardUpdate) {
-      // @ts-ignore
       updateBoard(dataWsBoardUpdate?.socketBoardUpdate);
       const { name, rootUser } = dataWsBoardUpdate?.socketBoardUpdate;
 
@@ -70,6 +91,4 @@ export const useSubscriptionWS: FC<UseSubscriptionProps> = ({
       }
     }
   }, [dataWsBoardUpdate]);
-
-  return null;
 };

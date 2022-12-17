@@ -14,6 +14,7 @@ interface TokenProps {
 
 export const useLogin = () => {
   const [isDisabled, setDisabled] = useState(true);
+
   const { addSnackbar } = useContext(SnackbarContext);
 
   const [loginReq, { error, data }] = useMutation<TokenProps, LoginMutationVariables>(loginGQL);

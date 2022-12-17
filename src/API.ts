@@ -129,35 +129,6 @@ export type UpdateBoardMutation = {
   } | null,
 };
 
-export type CreateColumnMutationVariables = {
-  name: string,
-  boardId: string,
-  tasks: Array< TaskInput | null >,
-};
-
-export type CreateColumnMutation = {
-  createColumn?:  {
-    __typename: "Board",
-    id: string,
-    name: string,
-    users: Array< string | null >,
-    rootUser: string,
-    columns:  Array< {
-      __typename: "Column",
-      id: string,
-      customId: string,
-      name: string,
-      boardId: string,
-      tasks:  Array< {
-        __typename: "Task",
-        id: string,
-        content: string,
-        columnId: string,
-      } | null >,
-    } | null >,
-  } | null,
-};
-
 export type CreateBoardMutationVariables = {
   name: string,
   users: Array< string | null >,
@@ -196,23 +167,13 @@ export type RemoveBoardMutation = {
   removeBoard?: string | null,
 };
 
-export type GetUsersQuery = {
-  getUsers?:  Array< {
-    __typename: "User",
-    id: string,
-    firstName: string,
-    lastName: string,
-    email: string,
-    password: string,
-  } | null > | null,
-};
-
-export type GetBoardQueryVariables = {
+export type AddUserForBoardMutationVariables = {
   id: string,
+  users: Array< string | null >,
 };
 
-export type GetBoardQuery = {
-  getBoard?:  {
+export type AddUserForBoardMutation = {
+  addUserForBoard?:  {
     __typename: "Board",
     id: string,
     name: string,
@@ -232,6 +193,17 @@ export type GetBoardQuery = {
       } | null >,
     } | null >,
   } | null,
+};
+
+export type GetUsersQuery = {
+  getUsers?:  Array< {
+    __typename: "User",
+    id: string,
+    firstName: string,
+    lastName: string,
+    email: string,
+    password: string,
+  } | null > | null,
 };
 
 export type GetAllBoardQuery = {
@@ -286,6 +258,33 @@ export type SocketBoardRemoveSubscription = {
 
 export type SocketBoardCreateSubscription = {
   socketBoardCreate?:  {
+    __typename: "Board",
+    id: string,
+    name: string,
+    users: Array< string | null >,
+    rootUser: string,
+    columns:  Array< {
+      __typename: "Column",
+      id: string,
+      customId: string,
+      name: string,
+      boardId: string,
+      tasks:  Array< {
+        __typename: "Task",
+        id: string,
+        content: string,
+        columnId: string,
+      } | null >,
+    } | null >,
+  } | null,
+};
+
+export type SocketAddUserForBoardSubscriptionVariables = {
+  rootUser: string,
+};
+
+export type SocketAddUserForBoardSubscription = {
+  socketAddUserForBoard?:  {
     __typename: "Board",
     id: string,
     name: string,

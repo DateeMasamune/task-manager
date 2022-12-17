@@ -4,8 +4,8 @@ import React, {
 import {
   Autocomplete, Dialog, DialogContent, DialogTitle, TextField,
 } from '@mui/material';
-
 import { useMutation } from '@apollo/client';
+
 import { Board, Column, Task } from '../../types';
 import { JusticeTaskManagerContext } from '../JusticeTaskManagerContext';
 import { ModalFooter } from '../ModalFooter';
@@ -20,10 +20,11 @@ interface CreateTaskModalProps {
 }
 
 export const CreateTaskModal: FC<CreateTaskModalProps> = ({ open, handleClose }) => {
-  const { boards, addTasks } = useContext(JusticeTaskManagerContext);
-  const { addSnackbar } = useContext(SnackbarContext);
   const [newTask, setNewTask] = useState({} as Task);
   const [boardSelected, setBoardSelected] = useState<Board | null>(null);
+
+  const { boards, addTasks } = useContext(JusticeTaskManagerContext);
+  const { addSnackbar } = useContext(SnackbarContext);
 
   const [updateBoardReq, { error: updateBoardError }] = useMutation<Board, UpdateBoardMutationVariables>(updateBoard);
 

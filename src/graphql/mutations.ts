@@ -60,31 +60,6 @@ export const updateBoard = /* GraphQL */ gql`
     }
   }
 `;
-export const createColumn = /* GraphQL */ gql`
-  mutation CreateColumn(
-    $name: String!
-    $boardId: String!
-    $tasks: [TaskInput]!
-  ) {
-    createColumn(name: $name, boardId: $boardId, tasks: $tasks) {
-      id
-      name
-      users
-      rootUser
-      columns {
-        id
-        customId
-        name
-        boardId
-        tasks {
-          id
-          content
-          columnId
-        }
-      }
-    }
-  }
-`;
 export const createBoard = /* GraphQL */ gql`
   mutation CreateBoard(
     $name: String!
@@ -119,5 +94,26 @@ export const createBoard = /* GraphQL */ gql`
 export const removeBoard = /* GraphQL */ gql`
   mutation RemoveBoard($id: ID!) {
     removeBoard(id: $id)
+  }
+`;
+export const addUserForBoard = /* GraphQL */ gql`
+  mutation AddUserForBoard($id: ID!, $users: [String]!) {
+    addUserForBoard(id: $id, users: $users) {
+      id
+      name
+      users
+      rootUser
+      columns {
+        id
+        customId
+        name
+        boardId
+        tasks {
+          id
+          content
+          columnId
+        }
+      }
+    }
   }
 `;

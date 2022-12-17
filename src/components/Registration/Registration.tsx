@@ -3,10 +3,10 @@ import { TextField } from '@mui/material';
 
 import { AuthFooter } from '../AuthFooter';
 import { AUTH_FIELDS, AUTH_VALIDATIONS } from '../../constants';
-
-import styles from './styles.module.scss';
 import { expectValidError } from '../../utils/expectValidError';
 import { useRegistration } from './useRegistration';
+
+import styles from './styles.module.scss';
 
 const {
   USERNAME_MAX_LENGTH, USERNAME_MIN_LENGTH, PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH,

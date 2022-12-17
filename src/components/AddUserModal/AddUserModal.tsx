@@ -1,5 +1,5 @@
 import React, {
-  ChangeEvent, FC, useContext, useState,
+  ChangeEvent, FC, useContext, useEffect, useState,
 } from 'react';
 import {
   Accordion,
@@ -7,12 +7,18 @@ import {
   AccordionSummary, Autocomplete, Checkbox, DialogContent, DialogTitle, FormControlLabel, FormGroup, TextField, Typography,
 } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
+import { useMutation } from '@apollo/client';
+
 import { ModalFooter } from '../ModalFooter';
 import { ModalWrapper } from '../ModalWrapper';
 import { JusticeTaskManagerContext } from '../JusticeTaskManagerContext';
 
-import styles from './styles.module.scss';
 import { Board } from '../../types';
+import { addUserForBoard } from '../../graphql/mutations';
+import { AddUserForBoardMutationVariables } from '../../API';
+import { SnackbarContext } from '../SnackbarContext';
+
+import styles from './styles.module.scss';
 
 interface AddUserModalProps {
   open: boolean
@@ -24,6 +30,9 @@ export const AddUserModal: FC<AddUserModalProps> = ({ open, handleClose }) => {
   const [boardId, setBoardId] = useState<string | null>('');
 
   const { users, boards } = useContext(JusticeTaskManagerContext);
+  const { addSnackbar } = useContext(SnackbarContext);
+
+  const [addUserForBoardReq, { error: errorAddUserForBoardReq }] = useMutation<Board, AddUserForBoardMutationVariables>(addUserForBoard);
 
   const handleAddUsersForBoard = (event: ChangeEvent<HTMLInputElement>) => {
     const { name: userId, checked } = event.target;
@@ -36,14 +45,28 @@ export const AddUserModal: FC<AddUserModalProps> = ({ open, handleClose }) => {
   };
 
   const handleCreateBoard = () => {
-    // createBoardReq({
-    //   variables: {
-    //     ...newBoard,
-    //   },
-    // });
-
+    if (addedUsers.length && !!boardId) {
+      addUserForBoardReq({
+        variables: {
+          id: boardId,
+          users: addedUsers,
+        },
+      });
+    }
     handleClose();
   };
+
+  useEffect(() => {
+    if (errorAddUserForBoardReq) {
+      addSnackbar({
+        open: true,
+        vertical: 'top',
+        horizontal: 'center',
+        message: errorAddUserForBoardReq.message,
+        type: 'error',
+      });
+    }
+  }, [errorAddUserForBoardReq]);
 
   return (
     <Dialog

@@ -4,8 +4,9 @@ import { TextField } from '@mui/material';
 import { AuthFooter } from '../AuthFooter';
 import { AUTH_FIELDS, AUTH_VALIDATIONS } from '../../constants';
 import { expectValidError } from '../../utils/expectValidError';
-import styles from './styles.module.scss';
 import { useLogin } from './useLogin';
+
+import styles from './styles.module.scss';
 
 const {
   PASSWORD_MAX_LENGTH, PASSWORD_MIN_LENGTH,

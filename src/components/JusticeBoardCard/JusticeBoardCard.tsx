@@ -1,10 +1,10 @@
+import React, { FC, useContext, useEffect } from 'react';
 import { Card, CardContent, Typography } from '@mui/material';
 import LockIcon from '@mui/icons-material/Lock';
-import React, { FC, useContext, useEffect } from 'react';
 import { useMutation } from '@apollo/client';
 import { useNavigate } from 'react-router-dom';
-import { CloseButton } from '../CloseButton';
 
+import { CloseButton } from '../CloseButton';
 import { RemoveBoardMutationVariables } from '../../API';
 import { removeBoard } from '../../graphql/mutations';
 import { myUser } from '../../utils/myUser';

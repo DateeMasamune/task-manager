@@ -51,12 +51,18 @@ export type ColumnInput = {
 
 export type Mutation = {
   __typename?: 'Mutation';
+  addUserForBoard?: Maybe<Board>;
   createBoard?: Maybe<Board>;
-  createColumn?: Maybe<Board>;
   login?: Maybe<Token>;
   register?: Maybe<User>;
   removeBoard?: Maybe<Scalars['ID']>;
   updateBoard?: Maybe<Board>;
+};
+
+
+export type MutationAddUserForBoardArgs = {
+  id: Scalars['ID'];
+  users: Array<InputMaybe<Scalars['String']>>;
 };
 
 
@@ -65,13 +71,6 @@ export type MutationCreateBoardArgs = {
   name: Scalars['String'];
   rootUser: Scalars['String'];
   users: Array<InputMaybe<Scalars['String']>>;
-};
-
-
-export type MutationCreateColumnArgs = {
-  boardId: Scalars['String'];
-  name: Scalars['String'];
-  tasks: Array<InputMaybe<TaskInput>>;
 };
 
 
@@ -101,20 +100,20 @@ export type MutationUpdateBoardArgs = {
 export type Query = {
   __typename?: 'Query';
   getAllBoard?: Maybe<Array<Maybe<Board>>>;
-  getBoard?: Maybe<Board>;
   getUsers?: Maybe<Array<Maybe<User>>>;
-};
-
-
-export type QueryGetBoardArgs = {
-  id: Scalars['String'];
 };
 
 export type Subscription = {
   __typename?: 'Subscription';
+  socketAddUserForBoard?: Maybe<Board>;
   socketBoardCreate?: Maybe<Board>;
   socketBoardRemove?: Maybe<Scalars['ID']>;
   socketBoardUpdate?: Maybe<Board>;
+};
+
+
+export type SubscriptionSocketAddUserForBoardArgs = {
+  rootUser: Scalars['ID'];
 };
 
 export type Task = {
@@ -274,8 +273,8 @@ export interface JsonScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes
 }
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
+  addUserForBoard?: Resolver<Maybe<ResolversTypes['Board']>, ParentType, ContextType, RequireFields<MutationAddUserForBoardArgs, 'id' | 'users'>>;
   createBoard?: Resolver<Maybe<ResolversTypes['Board']>, ParentType, ContextType, RequireFields<MutationCreateBoardArgs, 'columns' | 'name' | 'rootUser' | 'users'>>;
-  createColumn?: Resolver<Maybe<ResolversTypes['Board']>, ParentType, ContextType, RequireFields<MutationCreateColumnArgs, 'boardId' | 'name' | 'tasks'>>;
   login?: Resolver<Maybe<ResolversTypes['Token']>, ParentType, ContextType, RequireFields<MutationLoginArgs, 'email' | 'password'>>;
   register?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationRegisterArgs, 'email' | 'firstName' | 'lastName' | 'password'>>;
   removeBoard?: Resolver<Maybe<ResolversTypes['ID']>, ParentType, ContextType, RequireFields<MutationRemoveBoardArgs, 'id'>>;
@@ -284,11 +283,11 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   getAllBoard?: Resolver<Maybe<Array<Maybe<ResolversTypes['Board']>>>, ParentType, ContextType>;
-  getBoard?: Resolver<Maybe<ResolversTypes['Board']>, ParentType, ContextType, RequireFields<QueryGetBoardArgs, 'id'>>;
   getUsers?: Resolver<Maybe<Array<Maybe<ResolversTypes['User']>>>, ParentType, ContextType>;
 }>;
 
 export type SubscriptionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = ResolversObject<{
+  socketAddUserForBoard?: SubscriptionResolver<Maybe<ResolversTypes['Board']>, "socketAddUserForBoard", ParentType, ContextType, RequireFields<SubscriptionSocketAddUserForBoardArgs, 'rootUser'>>;
   socketBoardCreate?: SubscriptionResolver<Maybe<ResolversTypes['Board']>, "socketBoardCreate", ParentType, ContextType>;
   socketBoardRemove?: SubscriptionResolver<Maybe<ResolversTypes['ID']>, "socketBoardRemove", ParentType, ContextType>;
   socketBoardUpdate?: SubscriptionResolver<Maybe<ResolversTypes['Board']>, "socketBoardUpdate", ParentType, ContextType>;

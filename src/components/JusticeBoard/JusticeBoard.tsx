@@ -5,17 +5,22 @@ import {
 } from 'react-beautiful-dnd';
 import { useParams } from 'react-router-dom';
 import { useMutation } from '@apollo/client';
-import { JusticeColumns } from '../JusticeColumn';
-import { Board } from '../../types';
-import { JusticeTaskManagerContext } from '../JusticeTaskManagerContext';
 
-import styles from './styles.module.scss';
+import { JusticeColumns } from '../JusticeColumn';
+import { Board, Column } from '../../types';
+import { JusticeTaskManagerContext } from '../JusticeTaskManagerContext';
 import { updateBoard } from '../../graphql/mutations';
 import { UpdateBoardMutationVariables } from '../../API';
 import { SnackbarContext } from '../SnackbarContext';
+import { dragTaskOutSideColumns } from './dragTaskOutSideColumns';
+
+import styles from './styles.module.scss';
+import { dragTasksInsideColumns } from './dragTasksInsideColumns';
+import { dragOnlyColumns } from './dragOnlyColumns';
 
 export const JusticeBoard = () => {
   const [currentBoard, setCurrentBoard] = useState<Board>({} as Board);
+
   const { id: paramId } = useParams();
 
   const [updateBoardReq, { error: updateBoardError }] = useMutation<Board, UpdateBoardMutationVariables>(updateBoard);
@@ -25,6 +30,22 @@ export const JusticeBoard = () => {
   } = useContext(JusticeTaskManagerContext);
   const { addSnackbar } = useContext(SnackbarContext);
 
+  const mutationUpdateBoard = (updateColumn: Column[]) => {
+    setCurrentBoard((prevState) => ({
+      ...prevState,
+      columns: updateColumn,
+    }));
+
+    updateBoardReq({
+      variables: {
+        Board: {
+          ...currentBoard,
+          columns: updateColumn,
+        },
+      },
+    });
+  };
+
   const handlerOnDragEnd = (result: DropResult) => {
     const { source, destination } = result;
 
@@ -33,106 +54,35 @@ export const JusticeBoard = () => {
     const sourceColumn = currentBoard.columns.filter((col) => col).find(({ id }) => String(id) === source.droppableId);
     const destColumn = currentBoard.columns.filter((col) => col).find(({ id }) => String(id) === destination.droppableId);
 
-    if (source.droppableId !== destination.droppableId) { // перетаскивание между колонками
+    if (source.droppableId !== destination.droppableId) {
       if (sourceColumn && destColumn) {
-        const swapSourceItems = [...sourceColumn.tasks];
-        const swapDestinationItems = [...destColumn.tasks];
-
-        const [removedTaskFromColumn] = swapSourceItems.splice(source.index, 1);
-        swapDestinationItems.splice(destination.index, 0, removedTaskFromColumn);
-
-        const columnDestination = currentBoard.columns.filter((col) => col).find(({ id }) => String(id) === destination.droppableId);
-        const columnSource = currentBoard.columns.filter((col) => col).find(({ id }) => String(id) === source.droppableId);
-
-        if (columnDestination && columnSource) {
-          const updatePositionTaskColumns = currentBoard.columns.filter((col) => col).map((item) => {
-            if (item.id === columnDestination.id) {
-              return {
-                ...columnDestination,
-                tasks: swapDestinationItems,
-              };
-            }
-
-            if (item.id === columnSource.id) {
-              return {
-                ...columnSource,
-                tasks: swapSourceItems,
-              };
-            }
-
-            return item;
-          });
-
-          if (paramId) {
-            setCurrentBoard((prevState) => ({
-              ...prevState,
-              columns: updatePositionTaskColumns,
-            }));
-            // updateBoard({
-            //   ...currentBoard,
-            //   columns: updatePositionTaskColumns,
-            // });
-            updateBoardReq({
-              variables: {
-                Board: {
-                  ...currentBoard,
-                  columns: updatePositionTaskColumns,
-                },
-              },
-            });
-          }
-        }
+        dragTaskOutSideColumns({
+          sourceColumn,
+          destColumn,
+          source,
+          destination,
+          currentBoard,
+          paramId,
+          mutationUpdateBoard,
+        });
       }
-    } else if (sourceColumn) { // перетаскивание внутри колонки
-      const swapPlaces = [...sourceColumn.tasks];
-      const [removed] = swapPlaces.splice(source.index, 1);
-      swapPlaces.splice(destination.index, 0, removed);
-
-      const updatePositionTaskColumns = currentBoard.columns.filter((col) => col).map((item) => {
-        if (item.id === sourceColumn.id) {
-          return {
-            ...sourceColumn,
-            tasks: swapPlaces,
-          };
-        }
-
-        return item;
+    } else if (sourceColumn) {
+      dragTasksInsideColumns({
+        sourceColumn,
+        source,
+        destination,
+        paramId,
+        currentBoard,
+        mutationUpdateBoard,
       });
-
-      if (paramId) {
-        setCurrentBoard((prevState) => ({
-          ...prevState,
-          columns: updatePositionTaskColumns,
-        }));
-        updateBoardReq({
-          variables: {
-            Board: {
-              ...currentBoard,
-              columns: updatePositionTaskColumns,
-            },
-          },
-        });
-      }
     } else {
-      const dragColumn = [...currentBoard.columns];
-
-      const [removedColumn] = dragColumn.splice(source.index, 1);
-      dragColumn.splice(destination.index, 0, removedColumn);
-
-      if (paramId) { // перетаскивание колонок
-        setCurrentBoard((prevState) => ({
-          ...prevState,
-          columns: dragColumn,
-        }));
-        updateBoardReq({
-          variables: {
-            Board: {
-              ...currentBoard,
-              columns: dragColumn,
-            },
-          },
-        });
-      }
+      dragOnlyColumns({
+        currentBoard,
+        source,
+        destination,
+        paramId,
+        mutationUpdateBoard,
+      });
     }
   };
 

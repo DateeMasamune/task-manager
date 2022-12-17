@@ -6,9 +6,8 @@ import ModeIcon from '@mui/icons-material/Mode';
 import { Draggable } from 'react-beautiful-dnd';
 import { useMutation } from '@apollo/client';
 import { useParams } from 'react-router-dom';
-import { JusticeTaskCardList } from '../JusticeTaskCardList';
 
-import styles from './styles.module.scss';
+import { JusticeTaskCardList } from '../JusticeTaskCardList';
 import { Board, Column } from '../../types';
 import { ChangeName } from '../ChangeName';
 import { UpdateBoardMutationVariables } from '../../API';
@@ -17,18 +16,23 @@ import { JusticeTaskManagerContext } from '../JusticeTaskManagerContext';
 import { SnackbarContext } from '../SnackbarContext';
 import { CloseButton } from '../CloseButton';
 
+import styles from './styles.module.scss';
+
 interface JusticeColumnsProps {
   column: Column
   index: number
 }
 
 export const JusticeColumns: FC<JusticeColumnsProps> = ({ column, index }) => {
-  const { name, tasks, id } = column;
   const [openChangeName, setOpenChangeName] = useState(false);
+  
+  const { id: boardId } = useParams();
+
+  const { name, tasks, id } = column;
+
   const { renameColumn, removeColumn } = useContext(JusticeTaskManagerContext);
   const { addSnackbar } = useContext(SnackbarContext);
 
-  const { id: boardId } = useParams();
 
   const [updateBoardReq, { error: updateBoardError }] = useMutation<Board, UpdateBoardMutationVariables>(updateBoard);
 

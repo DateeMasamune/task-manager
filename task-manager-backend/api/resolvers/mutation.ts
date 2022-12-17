@@ -1,16 +1,18 @@
 import bcrypt from 'bcrypt';
 import { GraphQLError } from 'graphql';
 import jwt from 'jsonwebtoken';
-import mongoose from 'mongoose';
 import { config } from '../../config';
 import {
-  MutationCreateBoardArgs, MutationCreateColumnArgs, MutationLoginArgs, MutationRegisterArgs, MutationRemoveBoardArgs, MutationUpdateBoardArgs,
+  MutationAddUserForBoardArgs,
+  MutationCreateBoardArgs, MutationLoginArgs, MutationRegisterArgs, MutationRemoveBoardArgs, MutationUpdateBoardArgs,
 } from '../../resolvers-types';
 import { authControl } from '../../utils/authControl';
 import { Models } from '../modeles/types';
 import { SubscriptionsConst } from '../subscriptions-const';
 
-const { BOARD_UPDATE, BOARD_REMOVE, BOARD_CREATE } = SubscriptionsConst;
+const {
+  BOARD_UPDATE, BOARD_REMOVE, BOARD_CREATE, ADD_USER_FOR_BOARD,
+} = SubscriptionsConst;
 
 export const Mutation = {
   register: async (parent: any, {
@@ -70,34 +72,6 @@ export const Mutation = {
       throw new Error('Error creating task');
     }
   },
-  // createColumn: async (parent: any, { name, boardId, tasks }: MutationCreateColumnArgs, { models, pubsub }: Models) => {
-  //   const column = new models.Column({
-  //     _id: new mongoose.Types.ObjectId(),
-  //     name,
-  //     boardId,
-  //     tasks,
-  //   });
-
-  //   try {
-  //     await models.Board.updateOne({ _id: boardId }, {
-  //       $push: {
-  //         columns: {
-  //           ...column,
-  //         },
-  //       },
-  //     });
-
-  //     const board = await models.Board.findById(boardId);
-
-  //     await pubsub.publish(BOARD_UPDATE, {
-  //       socketBoardUpdate: board,
-  //     });
-
-  //     return board;
-  //   } catch (error) {
-  //     throw new Error('Error column task');
-  //   }
-  // },
   createBoard: async (parent: any, { name, users, rootUser }: MutationCreateBoardArgs, { models, user, pubsub }: Models) => {
     authControl(user);
     const board = new models.Board({
@@ -129,6 +103,29 @@ export const Mutation = {
       return id;
     } catch (error) {
       throw new Error('Error board task');
+    }
+  },
+  addUserForBoard: async (parent: any, { id, users }: MutationAddUserForBoardArgs, { models, user, pubsub }: Models) => {
+    authControl(user);
+
+    try {
+      await models.Board.updateOne({ _id: id }, {
+        $addToSet: {
+          users: {
+            $each: users,
+          },
+        },
+      });
+
+      const board = await models.Board.findById(id);
+
+      await pubsub.publish(ADD_USER_FOR_BOARD, {
+        socketAddUserForBoard: board,
+      });
+
+      return board;
+    } catch (error) {
+      throw new Error('Error add users for board');
     }
   },
 };

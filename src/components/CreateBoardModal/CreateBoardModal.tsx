@@ -6,18 +6,18 @@ import {
   AccordionDetails,
   AccordionSummary, Checkbox, Dialog, DialogContent, DialogTitle, FormControlLabel, FormGroup, TextField, Typography,
 } from '@mui/material';
-
 import { useMutation } from '@apollo/client';
+
 import { Board } from '../../types';
 import { JusticeTaskManagerContext } from '../JusticeTaskManagerContext';
 import { ModalWrapper } from '../ModalWrapper';
 import { ModalFooter } from '../ModalFooter';
-
-import styles from './styles.module.scss';
 import { CreateBoardMutationVariables, Board as BoardGQL } from '../../API';
 import { createBoard } from '../../graphql/mutations';
 import { myUser } from '../../utils/myUser';
 import { SnackbarContext } from '../SnackbarContext';
+
+import styles from './styles.module.scss';
 
 interface CreateBoardModalProps {
   open: boolean
@@ -30,8 +30,10 @@ interface CreateBoardResponse {
 
 export const CreateBoardModal: FC<CreateBoardModalProps> = ({ open, handleClose }) => {
   const [newBoard, setNewBoard] = useState({} as Board);
+
   const { users } = useContext(JusticeTaskManagerContext);
   const { addSnackbar } = useContext(SnackbarContext);
+
   const { User } = myUser();
 
   const [createBoardReq, { error }] = useMutation<CreateBoardResponse, CreateBoardMutationVariables>(createBoard);

@@ -51,3 +51,24 @@ export const socketBoardCreate = /* GraphQL */ gql`
     }
   }
 `;
+export const socketAddUserForBoard = /* GraphQL */ gql`
+  subscription SocketAddUserForBoard($rootUser: ID!) {
+    socketAddUserForBoard(rootUser: $rootUser) {
+      id
+      name
+      users
+      rootUser
+      columns {
+        id
+        customId
+        name
+        boardId
+        tasks {
+          id
+          content
+          columnId
+        }
+      }
+    }
+  }
+`;

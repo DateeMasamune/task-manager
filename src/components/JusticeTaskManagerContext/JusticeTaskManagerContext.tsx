@@ -1,50 +1,29 @@
-import { useQuery } from '@apollo/client';
 import React, {
-  createContext, FC, ReactNode, useContext, useEffect, useMemo, useState,
+  createContext, FC, ReactNode, useContext, useMemo, useState,
 } from 'react';
+
 import {
   Board, Column, Task, User,
 } from '../../types';
-import { Board as BoardGQL } from '../../API';
-import { getAllBoard, getUsers } from '../../graphql/queries';
 import { SnackbarContext } from '../SnackbarContext';
 import { useSubscriptionWS } from '../../hooks/useSubscriptionWS';
+import { useQueryApollo } from '../../hooks/useQueryApollo';
 
 interface JusticeTaskManagerContextProps {
   boards: Board[]
   users: User[]
-  // eslint-disable-next-line no-unused-vars
   addBoards: (board: Board) => void
-  // eslint-disable-next-line no-unused-vars
   addColumns: (column: Column) => Board[]
-  // eslint-disable-next-line no-unused-vars
   addTasks: (task: Task, idBoard: string) => Board | undefined
-  // eslint-disable-next-line no-unused-vars
-  addUsers: (user: User) => void
-  // eslint-disable-next-line no-unused-vars
-  updateColumns: (modifiedColumns: Column[], idBoard: string) => void
-  // eslint-disable-next-line no-unused-vars
   updateBoard: (board: Board) => void
-  // eslint-disable-next-line no-unused-vars
   renameColumn: (column: Column) => Board
-  // eslint-disable-next-line no-unused-vars
   renameTask: (task: Task, idBoard: string) => Board
-  // eslint-disable-next-line no-unused-vars
   removeTask: (task: Task, idBoard: string) => Board
-  // eslint-disable-next-line no-unused-vars
   removeColumn: (column: Column, idBoard: string) => Board
 }
 
 interface JusticeTaskManagerContextProviderProps {
   children: ReactNode
-}
-
-interface GetAllBoardResponse {
-  getAllBoard: BoardGQL[]
-}
-
-interface GetUsersResponse {
-  getUsers: User[]
 }
 
 export const JusticeTaskManagerContext = createContext<JusticeTaskManagerContextProps>({} as JusticeTaskManagerContextProps);
@@ -60,10 +39,14 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
     addBoards,
     updateBoard,
     addSnackbar,
+    boards,
   });
 
-  const { error: allBoardsError, data: allBoardsData } = useQuery<GetAllBoardResponse>(getAllBoard);
-  const { error: getUsersError, data: getUsersData } = useQuery<GetUsersResponse>(getUsers);
+  useQueryApollo({
+    setBoards: (board: Board[]) => { setBoards(board); },
+    setUsers: (user: User[]) => { setUsers(user); },
+    addSnackbar,
+  });
 
   function addBoards(board: Board) {
     setBoards((prevState) => ([...prevState, board]));
@@ -92,13 +75,6 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
     return board.map((insertBoard) => ({ ...insertBoard, columns: insertBoard.columns.length > 0 ? [...insertBoard.columns, column] : [column] }));
   };
 
-  const updateColumns = (modifiedColumns: Column[], idBoard: string) => {
-    const board = boards.filter(({ id }) => id === idBoard);
-    const [replaceColumns] = board.map((replaceBoard) => ({ ...replaceBoard, columns: modifiedColumns }));
-
-    updateBoard(replaceColumns);
-  };
-
   const removeColumn = (column: Column, boardId: string) => {
     const board: Board = boards.find(({ id }) => id === boardId) ?? {} as Board;
     const afterRemoveColumn = board.columns.filter((col) => col).filter(({ customId }) => customId !== column.customId);
@@ -124,10 +100,6 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
       });
       return copyBoard;
     }
-  };
-
-  const addUsers = (user: User) => {
-    setUsers((prevState) => ([...prevState, user]));
   };
 
   const renameColumn = (updateNameColumn: Column) => {
@@ -177,45 +149,12 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
     };
   };
 
-  useEffect(() => {
-    if (allBoardsData?.getAllBoard) {
-      // @ts-ignore
-      setBoards(allBoardsData?.getAllBoard);
-    }
-    if (getUsersData) {
-      setUsers(getUsersData.getUsers);
-    }
-  }, [allBoardsData, getUsersData]);
-
-  useEffect(() => {
-    if (allBoardsError) {
-      addSnackbar({
-        open: true,
-        vertical: 'top',
-        horizontal: 'center',
-        message: allBoardsError?.message,
-        type: 'error',
-      });
-    }
-    if (getUsersError) {
-      addSnackbar({
-        open: true,
-        vertical: 'top',
-        horizontal: 'center',
-        message: getUsersError?.message,
-        type: 'error',
-      });
-    }
-  }, [allBoardsError]);
-
   const justiceTaskManagerContextValue = useMemo(() => ({
     boards,
     users,
     addBoards,
     addColumns,
     addTasks,
-    addUsers,
-    updateColumns,
     updateBoard,
     renameColumn,
     renameTask,

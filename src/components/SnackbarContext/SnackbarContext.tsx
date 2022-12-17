@@ -13,7 +13,6 @@ export interface MySnackbarOrigin extends SnackbarOrigin {
 
 interface SnackbarContextProps {
   handleCloseSnackbar: () => void
-  // eslint-disable-next-line no-unused-vars
   addSnackbar: (notification: MySnackbarOrigin) => void
 }
 
