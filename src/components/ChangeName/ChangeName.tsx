@@ -1,5 +1,6 @@
 import React, { ChangeEvent, FC, useState } from 'react';
 import { Box, Button, TextField } from '@mui/material';
+import { ACCEPT, CANCEL } from '../../constants';
 
 interface ChangeNameProps {
   prevName: string
@@ -22,8 +23,8 @@ export const ChangeName: FC<ChangeNameProps> = ({
     <Box className={className}>
       <TextField value={name} onChange={handleChangeNameColumn} />
       <Box>
-        <Button onClick={() => sendChanges(name)}>Принять</Button>
-        <Button onClick={hideChangeName}>Отмена</Button>
+        <Button onClick={() => sendChanges(name)}>{ACCEPT}</Button>
+        <Button onClick={hideChangeName}>{CANCEL}</Button>
       </Box>
     </Box>
   );

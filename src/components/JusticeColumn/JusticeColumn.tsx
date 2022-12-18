@@ -17,6 +17,7 @@ import { SnackbarContext } from '../SnackbarContext';
 import { CloseButton } from '../CloseButton';
 
 import styles from './styles.module.scss';
+import { useJusticeColumn } from './useJusticeColumn';
 
 interface JusticeColumnsProps {
   column: Column
@@ -24,60 +25,11 @@ interface JusticeColumnsProps {
 }
 
 export const JusticeColumns: FC<JusticeColumnsProps> = ({ column, index }) => {
-  const [openChangeName, setOpenChangeName] = useState(false);
-  
-  const { id: boardId } = useParams();
-
   const { name, tasks, id } = column;
 
-  const { renameColumn, removeColumn } = useContext(JusticeTaskManagerContext);
-  const { addSnackbar } = useContext(SnackbarContext);
-
-
-  const [updateBoardReq, { error: updateBoardError }] = useMutation<Board, UpdateBoardMutationVariables>(updateBoard);
-
-  const handleChangeNameColumn = (newName: string) => {
-    const columnRename = { ...column, name: newName };
-    const board = renameColumn(columnRename);
-
-    if (board) {
-      updateBoardReq({
-        variables: {
-          Board: board,
-        },
-      });
-    }
-
-    setOpenChangeName(false);
-  };
-
-  const handleRemoveColumn = (event: MouseEvent) => {
-    event.stopPropagation();
-
-    if (boardId) {
-      const board = removeColumn(column, boardId);
-
-      if (board) {
-        updateBoardReq({
-          variables: {
-            Board: board,
-          },
-        });
-      }
-    }
-  };
-
-  useEffect(() => {
-    if (updateBoardError) {
-      addSnackbar({
-        open: true,
-        vertical: 'top',
-        horizontal: 'center',
-        message: updateBoardError.message,
-        type: 'error',
-      });
-    }
-  }, [updateBoardError]);
+  const {
+    setOpenChangeName, handleRemoveColumn, openChangeName, handleChangeNameColumn,
+  } = useJusticeColumn(column);
 
   return (
     <Draggable

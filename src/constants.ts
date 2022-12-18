@@ -53,3 +53,12 @@ export const AUTH_VALIDATIONS = {
   PASSWORD_MAX_LENGTH: 30,
   PASSWORD_MIN_LENGTH: 6,
 };
+
+export const ACCEPT = 'Принять';
+export const CANCEL = 'Отмена';
+export const ADD_NEW_BOARD = 'Добавить новую доску';
+export const ADD_PERMISSION_BOARD = 'Разрешите доступ к доске';
+export const ADD_NEW_COLUMN = 'Добавить новую колонку';
+export const ADD_NEW_TASK = 'Добавить новую задачу';
+export const CREATE = 'Принять';
+export const CANCELED = 'Отменить';

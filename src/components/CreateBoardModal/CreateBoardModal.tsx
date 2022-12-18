@@ -1,22 +1,15 @@
-import React, {
-  ChangeEvent, FC, useContext, useEffect, useState,
-} from 'react';
+import React, { FC, useContext } from 'react';
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary, Checkbox, Dialog, DialogContent, DialogTitle, FormControlLabel, FormGroup, TextField, Typography,
 } from '@mui/material';
-import { useMutation } from '@apollo/client';
-
-import { Board } from '../../types';
 import { JusticeTaskManagerContext } from '../JusticeTaskManagerContext';
 import { ModalWrapper } from '../ModalWrapper';
 import { ModalFooter } from '../ModalFooter';
-import { CreateBoardMutationVariables, Board as BoardGQL } from '../../API';
-import { createBoard } from '../../graphql/mutations';
-import { myUser } from '../../utils/myUser';
-import { SnackbarContext } from '../SnackbarContext';
 
+import { ADD_NEW_BOARD, ADD_PERMISSION_BOARD } from '../../constants';
+import { useCreateBoardModal } from './useCreateBoardModal';
 import styles from './styles.module.scss';
 
 interface CreateBoardModalProps {
@@ -24,68 +17,12 @@ interface CreateBoardModalProps {
   handleClose: () => void
 }
 
-interface CreateBoardResponse {
-  createBoard: BoardGQL
-}
-
 export const CreateBoardModal: FC<CreateBoardModalProps> = ({ open, handleClose }) => {
-  const [newBoard, setNewBoard] = useState({} as Board);
-
   const { users } = useContext(JusticeTaskManagerContext);
-  const { addSnackbar } = useContext(SnackbarContext);
 
-  const { User } = myUser();
-
-  const [createBoardReq, { error }] = useMutation<CreateBoardResponse, CreateBoardMutationVariables>(createBoard);
-
-  const handleOnchangeInputAddBoards = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-    setNewBoard((prevState) => ({
-      ...prevState,
-      [name]: value,
-      rootUser: User?.id ?? '',
-      users: [],
-      columns: [],
-    }));
-  };
-
-  const handleAddUsersForBoard = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, checked } = event.target;
-
-    if (checked) {
-      setNewBoard((prevState) => ({
-        ...prevState,
-        users: prevState?.users ? [...prevState.users, name] : [name],
-      }));
-    } else {
-      setNewBoard((prevState) => ({
-        ...prevState,
-        users: prevState?.users.filter((id) => id !== name),
-      }));
-    }
-  };
-
-  const handleCreateBoard = () => {
-    createBoardReq({
-      variables: {
-        ...newBoard,
-      },
-    });
-
-    handleClose();
-  };
-
-  useEffect(() => {
-    if (error) {
-      addSnackbar({
-        open: true,
-        vertical: 'top',
-        horizontal: 'center',
-        message: error?.message,
-        type: 'error',
-      });
-    }
-  }, [error]);
+  const {
+    handleOnchangeInputAddBoards, handleAddUsersForBoard, newBoard, handleCreateBoard,
+  } = useCreateBoardModal(handleClose);
 
   return (
     <Dialog
@@ -98,7 +35,7 @@ export const CreateBoardModal: FC<CreateBoardModalProps> = ({ open, handleClose 
       className={styles.wrapperCreateBoardModal}
     >
 
-      <DialogTitle>Добавить новую доску</DialogTitle>
+      <DialogTitle>{ADD_NEW_BOARD}</DialogTitle>
       <DialogContent>
         <ModalWrapper>
           <TextField id="standard-basic" label="Название Доски" variant="standard" name="name" onChange={handleOnchangeInputAddBoards} />
@@ -107,7 +44,7 @@ export const CreateBoardModal: FC<CreateBoardModalProps> = ({ open, handleClose 
               aria-controls="panel1a-content"
               id="panel1a-header"
             >
-              <Typography>Разрешите доступ к доске</Typography>
+              <Typography>{ADD_PERMISSION_BOARD}</Typography>
             </AccordionSummary>
             <AccordionDetails>
               <FormGroup>
@@ -116,7 +53,7 @@ export const CreateBoardModal: FC<CreateBoardModalProps> = ({ open, handleClose 
                     key={id}
                     control={
                       <Checkbox name={String(id)} onChange={handleAddUsersForBoard} />
-            }
+                }
                     label={`${firstName} ${lastName}`}
                   />
                 ))}

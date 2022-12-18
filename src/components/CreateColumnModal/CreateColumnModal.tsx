@@ -1,18 +1,13 @@
-import React, {
-  ChangeEvent, FC, useContext, useEffect, useState,
-} from 'react';
+import React, { FC } from 'react';
 import {
   Autocomplete, Dialog, DialogContent, DialogTitle, TextField,
 } from '@mui/material';
-import { useMutation } from '@apollo/client';
 
-import { Board, Column } from '../../types';
-import { JusticeTaskManagerContext } from '../JusticeTaskManagerContext';
+import { Board } from '../../types';
 import { ModalFooter } from '../ModalFooter';
 import { ModalWrapper } from '../ModalWrapper';
-import { updateBoard } from '../../graphql/mutations';
-import { UpdateBoardMutationVariables } from '../../API';
-import { SnackbarContext } from '../SnackbarContext';
+import { ADD_NEW_COLUMN } from '../../constants';
+import { useCreateColumnModal } from './useCreateColumnModal';
 
 interface CreateColumnModalProps {
   open: boolean
@@ -20,66 +15,9 @@ interface CreateColumnModalProps {
 }
 
 export const CreateColumnModal: FC<CreateColumnModalProps> = ({ open, handleClose }) => {
-  const [newColumn, setNewColumn] = useState({} as Column);
-
-  const { boards, addColumns } = useContext(JusticeTaskManagerContext);
-  const { addSnackbar } = useContext(SnackbarContext);
-
-  const [updateBoardReq, { error: updateBoardError }] = useMutation<Board, UpdateBoardMutationVariables>(updateBoard);
-
-  const handleOnChangeInputAddColumn = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
-
-    setNewColumn((prevState) => ({
-      ...prevState,
-      id: String(Date.now()),
-      [name]: value,
-    }));
-  };
-
-  const handleAutoCompleteAddColumn = (board: Board | null) => {
-    if (board) {
-      const { id } = board;
-
-      setNewColumn((prevState) => ({
-        ...prevState,
-        customId: String(Date.now()),
-        boardId: id,
-        tasks: [],
-      }));
-    } else {
-      // @ts-ignore
-      setNewColumn((prevState) => {
-        const { boardId, tasks, ...rest } = prevState;
-
-        return rest;
-      });
-    }
-  };
-
-  const createColumn = () => {
-    const [board] = addColumns(newColumn);
-    updateBoardReq({
-      variables: {
-        Board: board,
-      },
-    });
-
-    handleClose();
-    setNewColumn({} as Column);
-  };
-
-  useEffect(() => {
-    if (updateBoardError) {
-      addSnackbar({
-        open: true,
-        vertical: 'top',
-        horizontal: 'center',
-        message: updateBoardError?.message,
-        type: 'error',
-      });
-    }
-  }, [updateBoardError]);
+  const {
+    handleOnChangeInputAddColumn, handleAutoCompleteAddColumn, boards, newColumn, createColumn,
+  } = useCreateColumnModal(handleClose);
 
   return (
     <Dialog
@@ -90,7 +28,7 @@ export const CreateColumnModal: FC<CreateColumnModalProps> = ({ open, handleClos
       maxWidth="sm"
       fullWidth
     >
-      <DialogTitle>Добавить новую колонку</DialogTitle>
+      <DialogTitle>{ADD_NEW_COLUMN}</DialogTitle>
       <DialogContent>
         <ModalWrapper>
           <TextField id="standard-basic" label="Название колонки" variant="standard" name="name" onChange={handleOnChangeInputAddColumn} />

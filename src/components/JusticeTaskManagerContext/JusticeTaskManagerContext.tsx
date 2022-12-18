@@ -48,6 +48,8 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
     addSnackbar,
   });
 
+  const getBoard = (findId: string): Board[] => boards.filter(({ id }) => id === findId);
+
   function addBoards(board: Board) {
     setBoards((prevState) => ([...prevState, board]));
   }
@@ -70,13 +72,14 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
   }
 
   const addColumns = (column: Column) => {
-    const board: Board[] = boards.filter(({ id }) => id === column.boardId);
+    const board = getBoard(column.boardId);
 
     return board.map((insertBoard) => ({ ...insertBoard, columns: insertBoard.columns.length > 0 ? [...insertBoard.columns, column] : [column] }));
   };
 
   const removeColumn = (column: Column, boardId: string) => {
-    const board: Board = boards.find(({ id }) => id === boardId) ?? {} as Board;
+    const [board] = getBoard(boardId);
+
     const afterRemoveColumn = board.columns.filter((col) => col).filter(({ customId }) => customId !== column.customId);
 
     return {
@@ -85,8 +88,8 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
     };
   };
 
-  const addTasks = (task: Task, idBoard: string) => {
-    const board = boards.find(({ id }) => id === idBoard);
+  const addTasks = (task: Task, boardId: string) => {
+    const [board] = getBoard(boardId);
     const copyBoard: Board = JSON.parse(JSON.stringify(board));
 
     if (copyBoard) {
@@ -103,7 +106,7 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
   };
 
   const renameColumn = (updateNameColumn: Column) => {
-    const board: Board = boards.find(({ id }) => id === updateNameColumn.boardId) ?? {} as Board;
+    const [board] = getBoard(updateNameColumn.boardId);
 
     const updateColumnInBoard = board?.columns?.filter((col) => col).map((column) => {
       if (column.id === updateNameColumn.id) {
@@ -119,7 +122,7 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
   };
 
   const renameTask = (updateNameTask: Task, boardId: string) => {
-    const board: Board = boards.find(({ id }) => id === boardId) ?? {} as Board;
+    const [board] = getBoard(boardId);
 
     const updateNewColumn: Column[] = board.columns.filter((col) => col).map((thisColumn) => ({
       ...thisColumn,
@@ -136,7 +139,7 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
   };
 
   const removeTask = (task: Task, boardId: string) => {
-    const board: Board = boards.find(({ id }) => id === boardId) ?? {} as Board;
+    const [board] = getBoard(boardId);
 
     const updateNewColumn: Column[] = board.columns.filter((col) => col).map((thisColumn) => ({
       ...thisColumn,
@@ -160,7 +163,7 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
     renameTask,
     removeTask,
     removeColumn,
-  }), [boards, users]);
+  }), [boards, users, addBoards, addColumns, addTasks, updateBoard, renameColumn, renameTask, removeTask, removeColumn]);
 
   return (
     <JusticeTaskManagerContext.Provider value={justiceTaskManagerContextValue}>

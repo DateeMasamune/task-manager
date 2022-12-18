@@ -1,23 +1,18 @@
-import React, {
-  ChangeEvent, FC, useContext, useEffect, useState,
-} from 'react';
+import React, { FC, useContext } from 'react';
 import {
   Accordion,
   AccordionDetails,
   AccordionSummary, Autocomplete, Checkbox, DialogContent, DialogTitle, FormControlLabel, FormGroup, TextField, Typography,
 } from '@mui/material';
 import Dialog from '@mui/material/Dialog';
-import { useMutation } from '@apollo/client';
 
 import { ModalFooter } from '../ModalFooter';
 import { ModalWrapper } from '../ModalWrapper';
 import { JusticeTaskManagerContext } from '../JusticeTaskManagerContext';
 
 import { Board } from '../../types';
-import { addUserForBoard } from '../../graphql/mutations';
-import { AddUserForBoardMutationVariables } from '../../API';
-import { SnackbarContext } from '../SnackbarContext';
 
+import { useAddUserModal } from './useAddUserModal';
 import styles from './styles.module.scss';
 
 interface AddUserModalProps {
@@ -26,47 +21,11 @@ interface AddUserModalProps {
 }
 
 export const AddUserModal: FC<AddUserModalProps> = ({ open, handleClose }) => {
-  const [addedUsers, setAddedUsers] = useState<string[]>([]);
-  const [boardId, setBoardId] = useState<string | null>('');
+  const {
+    setBoardId, handleAddUsersForBoard, addedUsers, handleCreateBoard, boardId,
+  } = useAddUserModal(handleClose);
 
   const { users, boards } = useContext(JusticeTaskManagerContext);
-  const { addSnackbar } = useContext(SnackbarContext);
-
-  const [addUserForBoardReq, { error: errorAddUserForBoardReq }] = useMutation<Board, AddUserForBoardMutationVariables>(addUserForBoard);
-
-  const handleAddUsersForBoard = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name: userId, checked } = event.target;
-
-    if (checked) {
-      setAddedUsers((prevState) => ([...prevState, userId]));
-    } else {
-      setAddedUsers((prevState) => prevState?.filter((id) => id !== userId));
-    }
-  };
-
-  const handleCreateBoard = () => {
-    if (addedUsers.length && !!boardId) {
-      addUserForBoardReq({
-        variables: {
-          id: boardId,
-          users: addedUsers,
-        },
-      });
-    }
-    handleClose();
-  };
-
-  useEffect(() => {
-    if (errorAddUserForBoardReq) {
-      addSnackbar({
-        open: true,
-        vertical: 'top',
-        horizontal: 'center',
-        message: errorAddUserForBoardReq.message,
-        type: 'error',
-      });
-    }
-  }, [errorAddUserForBoardReq]);
 
   return (
     <Dialog

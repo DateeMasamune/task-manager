@@ -29,6 +29,7 @@
         "max-len": "off",
         "no-unsafe-optional-chaining": "off",
         "no-use-before-define": "off",
-        "no-unused-vars": "off"
+        "no-unused-vars": "off",
+        "consistent-return": "off"
     }
 }

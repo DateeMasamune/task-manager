@@ -1,22 +1,17 @@
 import React, {
-  FC, useContext, useEffect, useState,
+  FC,
 } from 'react';
 import {
   Box, Card, CardContent, Typography,
 } from '@mui/material';
 import { DraggableProvided, DraggableStateSnapshot } from 'react-beautiful-dnd';
 import ModeIcon from '@mui/icons-material/Mode';
-import { useParams } from 'react-router-dom';
-import { useMutation } from '@apollo/client';
 
 import { CloseButton } from '../CloseButton';
 import { ChangeName } from '../ChangeName';
-import { JusticeTaskManagerContext } from '../JusticeTaskManagerContext';
-import { Board, Task } from '../../types';
-import { updateBoard } from '../../graphql/mutations';
-import { UpdateBoardMutationVariables } from '../../API';
-import { SnackbarContext } from '../SnackbarContext';
+import { Task } from '../../types';
 
+import { useJusticeTaskCard } from './useJusticeTaskCard';
 import styles from './styles.module.scss';
 
 interface JusticeTaskCardProps {
@@ -28,56 +23,9 @@ interface JusticeTaskCardProps {
 export const JusticeTaskCard: FC<JusticeTaskCardProps> = ({
   providedItem, snapshotItem, task,
 }) => {
-  const [showCloseButton, setShowCloseButton] = useState(false);
-  const [openChangeName, setOpenChangeName] = useState(false);
-
-  const [updateBoardReq, { error: errorUpdateBoard }] = useMutation<Board, UpdateBoardMutationVariables>(updateBoard);
-
-  const { content } = task;
-
-  const showButton = () => setShowCloseButton(true);
-  const hideButton = () => setShowCloseButton(false);
-
-  const { id: boardId } = useParams();
-
-  const { renameTask, removeTask } = useContext(JusticeTaskManagerContext);
-  const { addSnackbar } = useContext(SnackbarContext);
-
-  const handleChangeNameColumn = (text: string) => {
-    const newTask = { ...task, content: text };
-    if (boardId) {
-      const board = renameTask(newTask, boardId);
-      updateBoardReq({
-        variables: {
-          Board: board,
-        },
-      });
-    }
-    setOpenChangeName(false);
-  };
-
-  const handleRemoveTask = () => {
-    if (boardId) {
-      const board = removeTask(task, boardId);
-      updateBoardReq({
-        variables: {
-          Board: board,
-        },
-      });
-    }
-  };
-
-  useEffect(() => {
-    if (errorUpdateBoard) {
-      addSnackbar({
-        open: true,
-        vertical: 'top',
-        horizontal: 'center',
-        message: errorUpdateBoard?.message,
-        type: 'error',
-      });
-    }
-  }, [errorUpdateBoard]);
+  const {
+    showButton, hideButton, openChangeName, content, handleChangeNameColumn, setOpenChangeName, showCloseButton, handleRemoveTask,
+  } = useJusticeTaskCard(task);
 
   return (
     <Card
