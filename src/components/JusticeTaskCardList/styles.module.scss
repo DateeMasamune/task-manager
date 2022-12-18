@@ -1,0 +1,8 @@
+.wrapperJusticeTaskCardList {
+  height: 74vh;
+  padding: 20px 20px 0;
+  overflow: auto;
+  
+  &::-webkit-scrollbar { width: 5px; background-color: black };
+  &::-webkit-scrollbar-thumb { background-color: white };
+}

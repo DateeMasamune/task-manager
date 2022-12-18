@@ -1,46 +1,72 @@
-# Getting Started with Create React App
+# ✨Justice Task Manager✨
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+##  Что это такое ?
 
-## Available Scripts
+О проекте:
 
-In the project directory, you can run:
+> В момент написания использовался node v16.10.0
 
-### `npm start`
+> Инструмент для визуального построение работы и планирования
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+> Создание досок
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+> Создание колонок, возможность выбора в какой доске создать колонку
 
-### `npm test`
+> Создание задач, возможность выбора в какой доске и в какой колонке создать задачу
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+> Перетаскивание колонок между собой
 
-### `npm run build`
+> Перетаскивание задач между колонками и внутри колонки, выставление задач по приоритету (вверху наиболее важные)
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+> Редактирование и удаление задач, колонок и досок
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+> Возможность пригласить пользователя к доске
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+> Уведомления при изменении досок и при приглашении юзера к доске
 
-### `npm run eject`
+##  Как работать ?
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+- Выполнить в корне прокете 
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+```sh
+npm install
+```
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+- Выполнить в папке task-manager-backend
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+```sh
+npm install
+npm install -g nodemon
+```
 
-## Learn More
+- Запустить фронт часть из корня приложения
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+```sh
+npm start
+```
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+- Запустить бекенд часть в новом терминале из корня приложения
+
+```sh
+npm start backend:dev
+```
+
+- При необходимости скачать схему , выполнить команду из корня папки task-manager-backend
+
+```sh
+npm run get-schema
+```
+
+- Для необходимости получить типы для работы на бекенде
+
+```sh
+npm run generate
+```
+
+- Для необходимости получения мутаций и типов на фронтенд части, выполнить команду из корня приложения
+
+```sh
+npm run amplify
+```
+
+- Готово к использованию, спасибо за внимание

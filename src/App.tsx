@@ -1,115 +1,67 @@
-import React, { useId, useState } from 'react';
-import { Box } from '@mui/material';
+import React from 'react';
+import { ThemeProvider } from '@mui/material';
+import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
+import { setContext } from '@apollo/client/link/context';
+import { createClient } from 'graphql-ws';
 import {
-  DragDropContext, Droppable, Draggable, DropResult,
-} from 'react-beautiful-dnd';
+  ApolloClient, ApolloProvider, createHttpLink, InMemoryCache, split,
+} from '@apollo/client';
+import { getMainDefinition } from '@apollo/client/utilities';
+import { SnackbarContextProvider } from './components/SnackbarContext';
+import { JusticeTaskManagerContextProvider } from './components/JusticeTaskManagerContext';
+import { JusticeBoardRoutes } from './components/JusticeBoardRoutes';
+import { theme } from './theme';
+import './index.css';
+import { myUser } from './utils/myUser';
 
-interface ItemsFromBackendProps {
-  id: string
-  content: string
-}
+const wsLink = new GraphQLWsLink(
+  createClient({
+    url: 'ws://localhost:5000/graphql',
+  }),
+);
 
-interface ColumsFromBackendProps {
-  id: string
-  name: string
-  items: ItemsFromBackendProps[]
-}
+const httpLink = createHttpLink({
+  uri: 'http://localhost:5000/graphql',
+});
+
+const splitLink = split(
+  ({ query }) => {
+    const definition = getMainDefinition(query);
+    return (
+      definition.kind === 'OperationDefinition'
+      && definition.operation === 'subscription'
+    );
+  },
+  wsLink,
+  httpLink,
+);
+
+const authLink = setContext((_, { headers }) => {
+  const { token } = myUser();
+  return {
+    headers: {
+      ...headers,
+      authorization: token || '',
+    },
+  };
+});
+
+const client = new ApolloClient({
+  link: authLink.concat(splitLink),
+  cache: new InMemoryCache({ addTypename: false }),
+});
 
 function App() {
-  const itemsFromBackend: ItemsFromBackendProps[] = [
-    {
-      id: useId(),
-      content: 'First task',
-    },
-    {
-      id: useId(),
-      content: 'Second task',
-    },
-  ];
-
-  const columsFromBackend: ColumsFromBackendProps[] = [
-    {
-      id: useId(),
-      name: 'Todo',
-      items: itemsFromBackend,
-    },
-  ];
-
-  const [columns, setColumns] = useState<ColumsFromBackendProps[]>(columsFromBackend);
-  console.log(columns);
-
-  const handlerOnDragEnd = (result: DropResult) => {
-    const { source, destination } = result;
-
-    if (!destination) return;
-
-    const column = columns.find(({ id }) => id === source.droppableId);
-    if (column) {
-      const swapPlaces = [...column.items];
-      [swapPlaces[source.index], swapPlaces[destination.index]] = [swapPlaces[destination.index], swapPlaces[source.index]];
-
-      const updateColumns = columns.map((item) => {
-        if (item.id === column.id) {
-          return {
-            ...column,
-            items: swapPlaces,
-          };
-        }
-
-        return item;
-      });
-
-      setColumns(updateColumns);
-    }
-  };
-
   return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', height: '100%' }}>
-      <DragDropContext onDragEnd={handlerOnDragEnd}>
-        {columns.map(({ id, items }) => (
-          <Droppable droppableId={id} key={id}>
-            {(providedCol, snapshotCol) => (
-              <Box
-                ref={providedCol.innerRef}
-                {...providedCol.droppableProps}
-                {...providedCol.innerRef}
-                sx={{
-                  background: snapshotCol.isDraggingOver ? 'lightblue' : 'lightgray', padding: 4, width: 250, minHeight: '91vh',
-                }}
-              >
-                {items.map(({ id: itemId, content }, index) => (
-                  <Draggable
-                    key={itemId}
-                    draggableId={itemId}
-                    index={index}
-                  >
-                    {(providedItem, snapshotItem) => (
-                      <Box
-                        ref={providedItem.innerRef}
-                        {...providedItem.draggableProps}
-                        {...providedItem.dragHandleProps}
-                        sx={{
-                          userSelect: 'none',
-                          margin: '0 0 8px 0',
-                          minHeight: '50px',
-                          backgroundColor: snapshotItem.isDragging ? '#263B4A' : '#456C86',
-                          color: 'white',
-                          ...providedItem.draggableProps.style,
-                        }}
-                      >
-                        {content}
-                      </Box>
-                    )}
-                  </Draggable>
-                ))}
-                {providedCol.placeholder}
-              </Box>
-            )}
-          </Droppable>
-        ))}
-
-      </DragDropContext>
-    </Box>
+    <ApolloProvider client={client}>
+      <ThemeProvider theme={theme}>
+        <SnackbarContextProvider>
+          <JusticeTaskManagerContextProvider>
+            <JusticeBoardRoutes />
+          </JusticeTaskManagerContextProvider>
+        </SnackbarContextProvider>
+      </ThemeProvider>
+    </ApolloProvider>
   );
 }
 

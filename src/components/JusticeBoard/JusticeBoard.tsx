@@ -1,11 +1,33 @@
-import React, { FC } from 'react';
+import React from 'react';
+import { Box } from '@mui/material';
+import {
+  DragDropContext, Droppable,
+} from 'react-beautiful-dnd';
 
-interface JusticeBoardProps {
-  data?: any
-}
+import { JusticeColumns } from '../JusticeColumn';
 
-export const JusticeBoard: FC<JusticeBoardProps> = () => (
-  <div>
-    {[{ id: 1 }, { id: 1 }, { id: 1 }].map(({ id }) => <div>{id}</div>)}
-  </div>
-);
+import { useJusticeBoard } from './useJusticeBoard';
+import styles from './styles.module.scss';
+
+export const JusticeBoard = () => {
+  const { handlerOnDragEnd, currentBoard } = useJusticeBoard();
+
+  return (
+    <DragDropContext onDragEnd={handlerOnDragEnd}>
+      <Droppable droppableId="all-columns" direction="horizontal" type="column">
+        {(provided) => (
+          <Box
+            className={styles.wrapperJusticeBoard}
+            {...provided.droppableProps}
+            ref={provided.innerRef}
+          >
+            {currentBoard?.columns?.filter((column) => column).map((column, index) => (
+              <JusticeColumns key={column?.id} column={column} index={index} />
+            ))}
+            {provided.placeholder}
+          </Box>
+        )}
+      </Droppable>
+    </DragDropContext>
+  );
+};
