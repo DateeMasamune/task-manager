@@ -1,4 +1,4 @@
-# ✨MJustice Task Manager✨
+# ✨Justice Task Manager✨
 
 ##  Что это такое ?
 
