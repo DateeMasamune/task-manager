@@ -53,9 +53,9 @@ type Query {
 }
 
 type Subscription {
-  socketBoardUpdate: Board
   socketBoardRemove: ID
   socketBoardCreate: Board
+  socketBoardUpdate(rootUser: ID!): Board
   socketAddUserForBoard(rootUser: ID!): Board
 }
 

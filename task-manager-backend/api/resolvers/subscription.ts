@@ -1,10 +1,10 @@
 import { withFilter } from 'graphql-subscriptions';
-import { Board, SubscriptionSocketAddUserForBoardArgs } from '../../resolvers-types';
+import { Board, SubscriptionSocketAddUserForBoardArgs, SubscriptionSocketBoardUpdateArgs } from '../../resolvers-types';
 import { Models } from '../modeles/types';
 import { SubscriptionsConst } from '../subscriptions-const';
 
-interface AddUserForBoardResponse {
-  socketAddUserForBoard: Board
+interface SubscriptionResponse {
+  [key: string]: Board
 }
 
 const {
@@ -16,7 +16,7 @@ export const Subscription = {
     subscribe: withFilter(
       (_parent: any, _arg: any, { pubsub }: Models) => pubsub.asyncIterator(ADD_USER_FOR_BOARD),
       (
-        payload: AddUserForBoardResponse,
+        payload: SubscriptionResponse,
         { rootUser }: SubscriptionSocketAddUserForBoardArgs,
       ) => {
         const { users } = payload.socketAddUserForBoard;
@@ -26,7 +26,17 @@ export const Subscription = {
     ),
   },
   socketBoardUpdate: {
-    subscribe: (_parent: any, _arg: any, { pubsub }: Models) => pubsub.asyncIterator(BOARD_UPDATE),
+    subscribe: withFilter(
+      (_parent: any, _arg: any, { pubsub }: Models) => pubsub.asyncIterator(BOARD_UPDATE),
+      (
+        payload: SubscriptionResponse,
+        { rootUser }: SubscriptionSocketBoardUpdateArgs,
+      ) => {
+        const { users, rootUser: payloadRootUser } = payload.socketBoardUpdate;
+
+        return users.includes(rootUser) || rootUser === payloadRootUser;
+      },
+    ),
   },
   socketBoardRemove: {
     subscribe: (_parent: any, _arg: any, { pubsub }: Models) => pubsub.asyncIterator(BOARD_REMOVE),
