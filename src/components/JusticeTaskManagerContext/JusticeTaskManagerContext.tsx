@@ -20,6 +20,7 @@ interface JusticeTaskManagerContextProps {
   renameTask: (task: Task, idBoard: string) => Board
   removeTask: (task: Task, idBoard: string) => Board
   removeColumn: (column: Column, idBoard: string) => Board
+  setIdCurrentBoard: (id: string) => void
 }
 
 interface JusticeTaskManagerContextProviderProps {
@@ -31,6 +32,7 @@ export const JusticeTaskManagerContext = createContext<JusticeTaskManagerContext
 export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProviderProps> = ({ children }) => {
   const [boards, setBoards] = useState<Board[]>([]);
   const [users, setUsers] = useState<User[]>([]);
+  const [trackCurrentBoard, setTrackCurrentBoard] = useState('');
 
   const { addSnackbar } = useContext(SnackbarContext);
 
@@ -40,6 +42,7 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
     updateBoard,
     addSnackbar,
     boards,
+    trackCurrentBoard,
   });
 
   useQueryApollo({
@@ -152,6 +155,10 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
     };
   };
 
+  const setIdCurrentBoard = (idParam: string) => {
+    setTrackCurrentBoard(idParam);
+  };
+
   const justiceTaskManagerContextValue = useMemo(() => ({
     boards,
     users,
@@ -163,7 +170,8 @@ export const JusticeTaskManagerContextProvider: FC<JusticeTaskManagerContextProv
     renameTask,
     removeTask,
     removeColumn,
-  }), [boards, users, addBoards, addColumns, addTasks, updateBoard, renameColumn, renameTask, removeTask, removeColumn]);
+    setIdCurrentBoard,
+  }), [boards, users, addBoards, addColumns, addTasks, updateBoard, renameColumn, renameTask, removeTask, removeColumn, setIdCurrentBoard]);
 
   return (
     <JusticeTaskManagerContext.Provider value={justiceTaskManagerContextValue}>

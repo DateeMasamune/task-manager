@@ -1,23 +1,17 @@
 import React, {
-  FC, useContext, useEffect, useState,
+  FC,
 } from 'react';
 import { Box, Typography } from '@mui/material';
 import ModeIcon from '@mui/icons-material/Mode';
 import { Draggable } from 'react-beautiful-dnd';
-import { useMutation } from '@apollo/client';
-import { useParams } from 'react-router-dom';
 
 import { JusticeTaskCardList } from '../JusticeTaskCardList';
-import { Board, Column } from '../../types';
+import { Column } from '../../types';
 import { ChangeName } from '../ChangeName';
-import { UpdateBoardMutationVariables } from '../../API';
-import { updateBoard } from '../../graphql/mutations';
-import { JusticeTaskManagerContext } from '../JusticeTaskManagerContext';
-import { SnackbarContext } from '../SnackbarContext';
 import { CloseButton } from '../CloseButton';
 
-import styles from './styles.module.scss';
 import { useJusticeColumn } from './useJusticeColumn';
+import styles from './styles.module.scss';
 
 interface JusticeColumnsProps {
   column: Column

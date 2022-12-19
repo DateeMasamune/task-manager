@@ -4,9 +4,14 @@
 
 import { gql } from "@apollo/client";
 
-export const socketBoardUpdate = /* GraphQL */ gql`
-  subscription SocketBoardUpdate {
-    socketBoardUpdate {
+export const socketBoardRemove = /* GraphQL */ gql`
+  subscription SocketBoardRemove {
+    socketBoardRemove
+  }
+`;
+export const socketBoardCreate = /* GraphQL */ gql`
+  subscription SocketBoardCreate {
+    socketBoardCreate {
       id
       name
       users
@@ -25,14 +30,9 @@ export const socketBoardUpdate = /* GraphQL */ gql`
     }
   }
 `;
-export const socketBoardRemove = /* GraphQL */ gql`
-  subscription SocketBoardRemove {
-    socketBoardRemove
-  }
-`;
-export const socketBoardCreate = /* GraphQL */ gql`
-  subscription SocketBoardCreate {
-    socketBoardCreate {
+export const socketBoardUpdate = /* GraphQL */ gql`
+  subscription SocketBoardUpdate($rootUser: ID!) {
+    socketBoardUpdate(rootUser: $rootUser) {
       id
       name
       users

@@ -229,8 +229,12 @@ export type GetAllBoardQuery = {
   } | null > | null,
 };
 
-export type SocketBoardUpdateSubscription = {
-  socketBoardUpdate?:  {
+export type SocketBoardRemoveSubscription = {
+  socketBoardRemove?: string | null,
+};
+
+export type SocketBoardCreateSubscription = {
+  socketBoardCreate?:  {
     __typename: "Board",
     id: string,
     name: string,
@@ -252,12 +256,12 @@ export type SocketBoardUpdateSubscription = {
   } | null,
 };
 
-export type SocketBoardRemoveSubscription = {
-  socketBoardRemove?: string | null,
+export type SocketBoardUpdateSubscriptionVariables = {
+  rootUser: string,
 };
 
-export type SocketBoardCreateSubscription = {
-  socketBoardCreate?:  {
+export type SocketBoardUpdateSubscription = {
+  socketBoardUpdate?:  {
     __typename: "Board",
     id: string,
     name: string,

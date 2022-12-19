@@ -116,6 +116,11 @@ export type SubscriptionSocketAddUserForBoardArgs = {
   rootUser: Scalars['ID'];
 };
 
+
+export type SubscriptionSocketBoardUpdateArgs = {
+  rootUser: Scalars['ID'];
+};
+
 export type Task = {
   __typename?: 'Task';
   columnId: Scalars['String'];
@@ -290,7 +295,7 @@ export type SubscriptionResolvers<ContextType = any, ParentType extends Resolver
   socketAddUserForBoard?: SubscriptionResolver<Maybe<ResolversTypes['Board']>, "socketAddUserForBoard", ParentType, ContextType, RequireFields<SubscriptionSocketAddUserForBoardArgs, 'rootUser'>>;
   socketBoardCreate?: SubscriptionResolver<Maybe<ResolversTypes['Board']>, "socketBoardCreate", ParentType, ContextType>;
   socketBoardRemove?: SubscriptionResolver<Maybe<ResolversTypes['ID']>, "socketBoardRemove", ParentType, ContextType>;
-  socketBoardUpdate?: SubscriptionResolver<Maybe<ResolversTypes['Board']>, "socketBoardUpdate", ParentType, ContextType>;
+  socketBoardUpdate?: SubscriptionResolver<Maybe<ResolversTypes['Board']>, "socketBoardUpdate", ParentType, ContextType, RequireFields<SubscriptionSocketBoardUpdateArgs, 'rootUser'>>;
 }>;
 
 export type TaskResolvers<ContextType = any, ParentType extends ResolversParentTypes['Task'] = ResolversParentTypes['Task']> = ResolversObject<{

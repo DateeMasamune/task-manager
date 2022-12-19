@@ -56,9 +56,10 @@ export const AUTH_VALIDATIONS = {
 
 export const ACCEPT = 'Принять';
 export const CANCEL = 'Отмена';
-export const ADD_NEW_BOARD = 'Добавить новую доску';
-export const ADD_PERMISSION_BOARD = 'Разрешите доступ к доске';
-export const ADD_NEW_COLUMN = 'Добавить новую колонку';
-export const ADD_NEW_TASK = 'Добавить новую задачу';
-export const CREATE = 'Принять';
+export const CREATE = 'Создать';
 export const CANCELED = 'Отменить';
+export const ADD_NEW_BOARD = 'Добавить новую доску';
+export const ADD_NEW_TASK = 'Добавить новую задачу';
+export const ADD_NEW_COLUMN = 'Добавить новую колонку';
+export const ADD_PERMISSION_BOARD = 'Разрешите доступ к доске';
+export const ADD_USER_FOR_BOARD = 'Пригласить к доске';

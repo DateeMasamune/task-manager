@@ -15,9 +15,9 @@ scalar JSON
         addUserForBoard(id: ID!, users: [String]!): Board
     }
     type Subscription {
-        socketBoardUpdate: Board
         socketBoardRemove: ID
         socketBoardCreate: Board
+        socketBoardUpdate(rootUser: ID!): Board
         socketAddUserForBoard(rootUser: ID!): Board
     }
     type User {
