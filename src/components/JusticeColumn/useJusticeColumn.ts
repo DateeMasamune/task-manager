@@ -18,10 +18,11 @@ export const useJusticeColumn = (column: Column) => {
   const [updateBoardReq, { error: updateBoardError }] = useMutation<Board, UpdateBoardMutationVariables>(updateBoard);
 
   const handleChangeNameColumn = (newName: string) => {
+    const { name } = column;
     const columnRename = { ...column, name: newName };
     const board = renameColumn(columnRename);
 
-    if (board) {
+    if (board && name !== newName) {
       updateBoardReq({
         variables: {
           Board: board,

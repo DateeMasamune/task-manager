@@ -52,7 +52,7 @@ export const useCreateBoardModal = (handleClose: () => void) => {
       },
     });
 
-    if (board?.data?.createBoard) {
+    if (board?.data?.createBoard && addUsers.length > 0) {
       await addUserForBoardReq({
         variables: {
           id: board?.data?.createBoard.id,

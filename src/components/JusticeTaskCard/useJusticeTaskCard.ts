@@ -23,9 +23,10 @@ export const useJusticeTaskCard = (task: Task) => {
   const { renameTask, removeTask } = useContext(JusticeTaskManagerContext);
   const { addSnackbar } = useContext(SnackbarContext);
 
-  const handleChangeNameColumn = (text: string) => {
-    const newTask = { ...task, content: text };
-    if (boardId) {
+  const handleChangeNameColumn = (newContent: string) => {
+    const newTask = { ...task, content: newContent };
+
+    if (boardId && content !== newContent) {
       const board = renameTask(newTask, boardId);
       updateBoardReq({
         variables: {

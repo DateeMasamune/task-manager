@@ -20,6 +20,7 @@ export const useJusticeBoard = () => {
 
   const {
     boards,
+    setIdCurrentBoard,
   } = useContext(JusticeTaskManagerContext);
   const { addSnackbar } = useContext(SnackbarContext);
 
@@ -82,6 +83,7 @@ export const useJusticeBoard = () => {
   useEffect(() => {
     if (paramId && boards) {
       setCurrentBoard(boards.find(({ id }) => id === paramId) ?? {} as Board);
+      setIdCurrentBoard(paramId);
     }
   }, [paramId, boards]);
 
@@ -96,6 +98,8 @@ export const useJusticeBoard = () => {
       });
     }
   }, [updateBoardError]);
+
+  useEffect(() => () => setIdCurrentBoard(''), []);
 
   return {
     handlerOnDragEnd, currentBoard,

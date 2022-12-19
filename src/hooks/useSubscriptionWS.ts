@@ -25,10 +25,11 @@ interface UseSubscriptionProps {
   removeBoard: (id: string) => void
   addSnackbar: (notification: MySnackbarOrigin) => void
   boards: Board[]
+  trackCurrentBoard: string
 }
 
 export const useSubscriptionWS = ({
-  removeBoard, addBoards, updateBoard, addSnackbar, boards,
+  removeBoard, addBoards, updateBoard, addSnackbar, boards, trackCurrentBoard,
 }: UseSubscriptionProps) => {
   const { User } = myUser();
   const { data: dataWsBoardUpdate } = useSubscription<SocketBoardResponse, SocketBoardUpdateSubscription>(socketBoardUpdate);
@@ -78,9 +79,9 @@ export const useSubscriptionWS = ({
   useEffect(() => {
     if (dataWsBoardUpdate) {
       updateBoard(dataWsBoardUpdate?.socketBoardUpdate);
-      const { name, rootUser } = dataWsBoardUpdate?.socketBoardUpdate;
+      const { name, rootUser, id } = dataWsBoardUpdate?.socketBoardUpdate;
 
-      if (rootUser !== User?.id) {
+      if (rootUser !== User?.id && trackCurrentBoard !== id) {
         addSnackbar({
           open: true,
           vertical: 'top',
