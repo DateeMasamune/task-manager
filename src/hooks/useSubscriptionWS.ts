@@ -46,7 +46,7 @@ export const useSubscriptionWS = ({
 
       const [board] = boards.filter(({ id: boardId }) => boardId === id);
 
-      const checkMyInBoard = board.users.includes(User?.id ?? '');
+      const checkMyInBoard = User?.id ? board.users.includes(User?.id) : true;
 
       if (rootUser !== User?.id) {
         updateBoard(dataWsAddUserForBoard.socketAddUserForBoard);

@@ -15,7 +15,7 @@ export const Subscription = {
   socketAddUserForBoard: {
     subscribe: withFilter(
       (_parent: any, _arg: any, { pubsub }: Models) => pubsub.asyncIterator(ADD_USER_FOR_BOARD),
-      async (
+      (
         payload: AddUserForBoardResponse,
         { rootUser }: SubscriptionSocketAddUserForBoardArgs,
       ) => {

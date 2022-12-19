@@ -13,6 +13,7 @@ import { JusticeTaskManagerContext } from '../JusticeTaskManagerContext';
 import { Board } from '../../types';
 
 import { useAddUserModal } from './useAddUserModal';
+import { ADD_USER_FOR_BOARD } from '../../constants';
 import styles from './styles.module.scss';
 
 interface AddUserModalProps {
@@ -33,7 +34,7 @@ export const AddUserModal: FC<AddUserModalProps> = ({ open, handleClose }) => {
       onClose={handleClose}
       className={styles.addUserModalWrapper}
     >
-      <DialogTitle>Пригласить пользователя к доске</DialogTitle>
+      <DialogTitle>{ADD_USER_FOR_BOARD}</DialogTitle>
       <DialogContent>
         <ModalWrapper>
           <Autocomplete

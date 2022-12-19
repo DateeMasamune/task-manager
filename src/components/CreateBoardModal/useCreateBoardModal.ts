@@ -2,8 +2,8 @@ import {
   useState, useContext, ChangeEvent, useEffect,
 } from 'react';
 import { useMutation } from '@apollo/client';
-import { Board, CreateBoardMutationVariables } from '../../API';
-import { createBoard } from '../../graphql/mutations';
+import { AddUserForBoardMutationVariables, Board, CreateBoardMutationVariables } from '../../API';
+import { addUserForBoard, createBoard } from '../../graphql/mutations';
 import { myUser } from '../../utils/myUser';
 import { SnackbarContext } from '../SnackbarContext';
 
@@ -13,12 +13,14 @@ interface CreateBoardResponse {
 
 export const useCreateBoardModal = (handleClose: () => void) => {
   const [newBoard, setNewBoard] = useState({} as Board);
+  const [addUsers, setAddUsers] = useState<string[]>([]);
 
   const { addSnackbar } = useContext(SnackbarContext);
 
   const { User } = myUser();
 
-  const [createBoardReq, { error }] = useMutation<CreateBoardResponse, CreateBoardMutationVariables>(createBoard);
+  const [createBoardReq, { error: errorCreateBoardReq }] = useMutation<CreateBoardResponse, CreateBoardMutationVariables>(createBoard);
+  const [addUserForBoardReq, { error: errorAddUserForBoardReq }] = useMutation<Board, AddUserForBoardMutationVariables>(addUserForBoard);
 
   const handleOnchangeInputAddBoards = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -35,39 +37,54 @@ export const useCreateBoardModal = (handleClose: () => void) => {
     const { name, checked } = event.target;
 
     if (checked) {
-      setNewBoard((prevState) => ({
-        ...prevState,
-        users: prevState?.users ? [...prevState.users, name] : [name],
-      }));
+      setAddUsers((prevState) => (prevState.length ? [...prevState, name] : [name]
+      ));
     } else {
-      setNewBoard((prevState) => ({
-        ...prevState,
-        users: prevState?.users.filter((id) => id !== name),
-      }));
+      setAddUsers((prevState) => (prevState?.filter((id) => id !== name)
+      ));
     }
   };
 
-  const handleCreateBoard = () => {
-    createBoardReq({
+  const handleCreateBoard = async () => {
+    const board = await createBoardReq({
       variables: {
         ...newBoard,
       },
     });
 
+    if (board?.data?.createBoard) {
+      await addUserForBoardReq({
+        variables: {
+          id: board?.data?.createBoard.id,
+          users: addUsers,
+        },
+      });
+    }
+
     handleClose();
   };
 
   useEffect(() => {
-    if (error) {
+    if (errorCreateBoardReq) {
       addSnackbar({
         open: true,
         vertical: 'top',
         horizontal: 'center',
-        message: error?.message,
+        message: errorCreateBoardReq?.message,
         type: 'error',
       });
     }
-  }, [error]);
+
+    if (errorAddUserForBoardReq) {
+      addSnackbar({
+        open: true,
+        vertical: 'top',
+        horizontal: 'center',
+        message: errorAddUserForBoardReq?.message,
+        type: 'error',
+      });
+    }
+  }, [errorCreateBoardReq, errorAddUserForBoardReq]);
 
   return {
     handleOnchangeInputAddBoards, handleAddUsersForBoard, newBoard, handleCreateBoard,
