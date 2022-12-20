@@ -30,6 +30,7 @@
         "no-unsafe-optional-chaining": "off",
         "no-use-before-define": "off",
         "no-unused-vars": "off",
-        "consistent-return": "off"
+        "consistent-return": "off",
+        "no-shadow": "off"
     }
 }

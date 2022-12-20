@@ -50,13 +50,9 @@ export const useJusticeTaskCard = (task: Task) => {
 
   useEffect(() => {
     if (errorUpdateBoard) {
-      addSnackbar({
-        open: true,
-        vertical: 'top',
-        horizontal: 'center',
-        message: errorUpdateBoard?.message,
-        type: 'error',
-      });
+      addSnackbar(
+        errorUpdateBoard?.message,
+      );
     }
   }, [errorUpdateBoard]);
 

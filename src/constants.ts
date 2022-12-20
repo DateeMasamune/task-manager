@@ -1,5 +1,3 @@
-import { AUTH_FIELDS_PROPS } from './types';
-
 export const routes = {
   MAIN: '/',
   AllBOARDS: '/AllBoards',
@@ -40,12 +38,12 @@ export const menuList = [
   },
 ];
 
-export const AUTH_FIELDS: AUTH_FIELDS_PROPS = {
-  FIRST_NAME: 'firstName',
-  LAST_NAME: 'lastName',
-  PASSWORD: 'password',
-  EMAIL: 'email',
-};
+export enum AUTH_FIELDS {
+  FIRST_NAME= 'firstName',
+  LAST_NAME = 'lastName',
+  PASSWORD ='password',
+  EMAIL= 'email',
+}
 
 export const AUTH_VALIDATIONS = {
   USERNAME_MAX_LENGTH: 30,

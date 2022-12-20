@@ -69,13 +69,7 @@ export const useCreateTaskModal = (handleClose: () => void) => {
 
   useEffect(() => {
     if (updateBoardError) {
-      addSnackbar({
-        open: true,
-        vertical: 'top',
-        horizontal: 'center',
-        message: updateBoardError?.message,
-        type: 'error',
-      });
+      addSnackbar(updateBoardError?.message);
     }
   }, [updateBoardError]);
 

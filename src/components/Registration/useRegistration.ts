@@ -49,13 +49,7 @@ export const useRegistration = () => {
     }
 
     if (error) {
-      addSnackbar({
-        open: true,
-        vertical: 'top',
-        horizontal: 'center',
-        message: error?.message,
-        type: 'error',
-      });
+      addSnackbar(error?.message);
     }
   }, [error, data]);
 

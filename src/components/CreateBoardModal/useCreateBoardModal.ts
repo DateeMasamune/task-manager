@@ -66,23 +66,11 @@ export const useCreateBoardModal = (handleClose: () => void) => {
 
   useEffect(() => {
     if (errorCreateBoardReq) {
-      addSnackbar({
-        open: true,
-        vertical: 'top',
-        horizontal: 'center',
-        message: errorCreateBoardReq?.message,
-        type: 'error',
-      });
+      addSnackbar(errorCreateBoardReq?.message);
     }
 
     if (errorAddUserForBoardReq) {
-      addSnackbar({
-        open: true,
-        vertical: 'top',
-        horizontal: 'center',
-        message: errorAddUserForBoardReq?.message,
-        type: 'error',
-      });
+      addSnackbar(errorAddUserForBoardReq?.message);
     }
   }, [errorCreateBoardReq, errorAddUserForBoardReq]);
 

@@ -22,7 +22,7 @@ export const JusticeBoardCard: FC<JusticeBoardCardProps> = ({ board }) => {
   } = useJusticeBoardCards(id, board);
 
   return (
-    <Card key={id} className={styles.card} onClick={handleNavigateToBoard}>
+    <Card className={styles.card} onClick={handleNavigateToBoard}>
       {rootUser === User?.id && <CloseButton removeFunction={(event) => handleRemoveBoard(event)} />}
       {!checkPermission && <LockIcon className={styles.lockBoard} />}
       <CardContent>

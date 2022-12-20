@@ -4,7 +4,6 @@ import { useSubscription } from '@apollo/client';
 import {
   SocketAddUserForBoardSubscriptionVariables, SocketBoardCreateSubscription, SocketBoardRemoveSubscription, SocketBoardUpdateSubscriptionVariables,
 } from '../API';
-import { MySnackbarOrigin } from '../components/SnackbarContext';
 import {
   socketAddUserForBoard, socketBoardCreate, socketBoardRemove, socketBoardUpdate,
 } from '../graphql/subscriptions';
@@ -23,7 +22,7 @@ interface UseSubscriptionProps {
   addBoards: (board: Board) => void
   updateBoard: (board: Board) => void
   removeBoard: (id: string) => void
-  addSnackbar: (notification: MySnackbarOrigin) => void
+  addSnackbar: (message: string, type?: 'error' | 'notification') => void
   boards: Board[]
   trackCurrentBoard: string
 }
@@ -55,13 +54,7 @@ export const useSubscriptionWS = ({
       if (rootUser !== User?.id) {
         updateBoard(dataWsAddUserForBoard.socketAddUserForBoard);
         if (!checkMyInBoard) {
-          addSnackbar({
-            open: true,
-            vertical: 'top',
-            horizontal: 'center',
-            message: `Вас пригласили к доске ${name}`,
-            type: 'notification',
-          });
+          addSnackbar(`Вас пригласили к доске ${name}`, 'notification');
         }
       }
     }
@@ -85,13 +78,7 @@ export const useSubscriptionWS = ({
       const { name, id } = dataWsBoardUpdate?.socketBoardUpdate;
 
       if (trackCurrentBoard !== id) {
-        addSnackbar({
-          open: true,
-          vertical: 'top',
-          horizontal: 'center',
-          message: `Доска ${name} изменилась, проверьте пожалуйста`,
-          type: 'notification',
-        });
+        addSnackbar(`Доска ${name} изменилась, проверьте пожалуйста`, 'notification');
       }
     }
   }, [dataWsBoardUpdate]);

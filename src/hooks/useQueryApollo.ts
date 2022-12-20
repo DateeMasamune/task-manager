@@ -3,7 +3,6 @@ import { useQuery } from '@apollo/client';
 
 import { getAllBoard, getUsers } from '../graphql/queries';
 import { Board, User } from '../types';
-import { MySnackbarOrigin } from '../components/SnackbarContext';
 
 interface GetAllBoardResponse {
   getAllBoard: Board[]
@@ -16,7 +15,7 @@ interface GetUsersResponse {
 interface UseQueryApolloProps {
   setBoards: (board: Board[]) => void
   setUsers: (user: User[]) => void
-  addSnackbar: (notification: MySnackbarOrigin) => void
+  addSnackbar: (message: string, type?: 'error' | 'notification') => void
 }
 
 export const useQueryApollo = ({ setBoards, setUsers, addSnackbar }: UseQueryApolloProps) => {
@@ -34,22 +33,10 @@ export const useQueryApollo = ({ setBoards, setUsers, addSnackbar }: UseQueryApo
 
   useEffect(() => {
     if (allBoardsError) {
-      addSnackbar({
-        open: true,
-        vertical: 'top',
-        horizontal: 'center',
-        message: allBoardsError?.message,
-        type: 'error',
-      });
+      addSnackbar(allBoardsError?.message);
     }
     if (getUsersError) {
-      addSnackbar({
-        open: true,
-        vertical: 'top',
-        horizontal: 'center',
-        message: getUsersError?.message,
-        type: 'error',
-      });
+      addSnackbar(getUsersError?.message);
     }
   }, [allBoardsError]);
 };

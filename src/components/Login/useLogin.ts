@@ -50,23 +50,14 @@ export const useLogin = () => {
     if (data) {
       localStorage.setItem('user', JSON.stringify(data.login));
       navigate('/');
-      addSnackbar({
-        open: true,
-        vertical: 'top',
-        horizontal: 'center',
-        message: 'Вы успешно вошли в систему',
-        type: 'notification',
-      });
+      addSnackbar(
+        'Вы успешно вошли в систему',
+        'notification',
+      );
     }
 
     if (error) {
-      addSnackbar({
-        open: true,
-        vertical: 'top',
-        horizontal: 'center',
-        message: error?.message,
-        type: 'error',
-      });
+      addSnackbar(error?.message);
     }
   }, [error, data]);
 

@@ -49,13 +49,9 @@ export const useAddUserModal = (handleClose: () => void) => {
 
   useEffect(() => {
     if (errorAddUserForBoardReq) {
-      addSnackbar({
-        open: true,
-        vertical: 'top',
-        horizontal: 'center',
-        message: errorAddUserForBoardReq.message,
-        type: 'error',
-      });
+      addSnackbar(
+        errorAddUserForBoardReq.message,
+      );
     }
   }, [errorAddUserForBoardReq]);
   return {

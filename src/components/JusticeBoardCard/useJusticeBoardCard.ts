@@ -35,13 +35,7 @@ export const useJusticeBoardCards = (id: string, board: Board) => {
 
   useEffect(() => {
     if (errorRemoveBoard) {
-      addSnackbar({
-        open: true,
-        vertical: 'top',
-        horizontal: 'center',
-        message: errorRemoveBoard.message,
-        type: 'error',
-      });
+      addSnackbar(errorRemoveBoard.message);
     }
   }, [errorRemoveBoard]);
 

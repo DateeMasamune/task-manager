@@ -13,7 +13,7 @@ export interface MySnackbarOrigin extends SnackbarOrigin {
 
 interface SnackbarContextProps {
   handleCloseSnackbar: () => void
-  addSnackbar: (notification: MySnackbarOrigin) => void
+  addSnackbar: (message: string, type?: 'error' | 'notification') => void
 }
 
 interface SnackbarContextProviderProps {
@@ -37,8 +37,10 @@ export const SnackbarContextProvider: FC<SnackbarContextProviderProps> = ({ chil
 
   const handleCloseSnackbar = () => setStateSnackbar((prevState) => ({ ...prevState, open: false }));
 
-  const addSnackbar = (notification: MySnackbarOrigin) => {
-    setStateSnackbar((prevState) => ({ ...prevState, ...notification }));
+  const addSnackbar = (message: string, type: 'error' | 'notification' = 'error') => {
+    setStateSnackbar((prevState) => ({
+      ...prevState, open: true, type, message,
+    }));
   };
 
   const SnackbarContextProviderValue = useMemo(() => ({
